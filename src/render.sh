@@ -20,8 +20,15 @@ for f in [0-9]-*.svg; do
   echo "backgrounds/${f%.svg}.jpg"
 done
 
-# The preview card has no wide near-black gradient, so it needs no dither --
-# and skipping it takes the PNG from 2.4M to ~120K.
-rsvg-convert -w 1800 -h 1012 preview.svg -o ../preview.png
+# The preview card is the terminal and palette composited OVER a real wallpaper,
+# so it shows the theme as a desktop rather than as a flat swatch sheet. The
+# overlay is transparent SVG; 1-grid is the backdrop because it is the quietest
+# -- on 2-emblem the bat ends up behind the terminal and only a stray wing shows.
+# No dither here: the card has no wide near-black gradient to band, and skipping
+# it takes the PNG from 2.4M to ~150K.
+rsvg-convert -w 1800 -h 1012 preview-overlay.svg -o /tmp/dk-overlay.png
+magick ../backgrounds/1-grid.jpg -resize 1800x1012^ -gravity center -extent 1800x1012 \
+  /tmp/dk-overlay.png -composite ../preview.png
+rm -f /tmp/dk-overlay.png
 echo "preview.png"
 rm -f /tmp/dk-render.png
