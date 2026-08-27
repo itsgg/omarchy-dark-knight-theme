@@ -22,7 +22,7 @@ omarchy theme set "Dark Knight"
 
 A theme cloned from a git repo is not allowed to contribute files that run
 code, so `neovim.lua` and `vscode.json` are dropped on install and Omarchy says
-so on stderr. Neovim and VS Code still get themed — Omarchy regenerates both
+so on stderr. Neovim and VS Code still get themed, because Omarchy regenerates both
 from `colors.toml` through its own templates. The only thing lost is this
 theme's preference for the Kanagawa colorscheme in each; see
 [Neovim and VS Code](#neovim-and-vs-code) below if you want that too.
@@ -33,14 +33,14 @@ applies.
 
 ## About the emblem
 
-The bat is drawn from scratch in `src/bat.py` — it is a fan rendition, not a
+The bat is drawn from scratch in `src/bat.py`. It is a fan rendition, not a
 copy of any official artwork. Batman and the bat emblem are trademarks of DC
 Comics. This is an unofficial, non-commercial fan theme with no affiliation
 with or endorsement by DC. See [NOTICE](NOTICE).
 
 ## Token mapping
 
-The site's primitives map onto Omarchy's keys one for one, so a colour changed
+The site's primitives map onto Omarchy's keys one for one, so a color changed
 in `_tokens.scss` has exactly one counterpart here.
 
 | Site primitive | Hex       | Omarchy key                          |
@@ -60,50 +60,49 @@ in `_tokens.scss` has exactly one counterpart here.
 
 Two keys are derived rather than copied:
 
-- `selection` (`#423818`) is `--selection-bg` — gold at 28% over `--ink-900` —
-  flattened, because Omarchy wants an opaque colour where CSS took an alpha.
+- `selection` (`#423818`) is `--selection-bg` (gold at 28% over `--ink-900`)
+  flattened, because Omarchy wants an opaque color where CSS took an alpha.
 - `muted` (`#545a64`) is the midpoint of `--line-600` and `--slate-500`. The
   design system has no token at that level, and Omarchy needs one for the
-  structural slot -- ANSI `color8`, borders, indent guides, dividers. It is
-  deliberately dim: at 2.76:1 on the ground it sits above the median of the
-  stock dark themes (2.26:1; matte-black runs 1.48:1). Do not "fix" it up to
-  a text-contrast ratio -- that is `dark_foreground`'s job, and it already
-  carries `--slate-500` at 5.22:1.
+  structural slot: ANSI `color8`, borders, indent guides, dividers. It is
+  deliberately dim. At 2.76:1 on the ground it sits above the median of the
+  stock dark themes (2.26:1; matte-black runs 1.48:1), so do not raise it to a
+  text-contrast ratio. That is `dark_foreground`'s job, and it already carries
+  `--slate-500` at 5.22:1.
 
 `orange`, `cyan`, `magenta` and `brown` have no counterpart in the design
-system at all. They are derived in-family — warm hues bent toward the brass,
-cool toward the steel — rather than borrowed from an unrelated palette, so a
-full 16-colour ANSI app still looks like it belongs here.
+system at all. They are derived in-family, warm hues bent toward the brass and
+cool toward the steel, rather than borrowed from an unrelated palette, so a
+full 16-color ANSI app still looks like it belongs here.
 
 `foreground`/`background` contrast is 13.13:1, matching the ratio
 `_tokens.scss` documents for the same pair.
 
 ## Backgrounds
 
-Three, all generated — no stock photography, no raster source at all.
+Three, all generated. No stock photography, no raster source at all.
 
-An earlier set went the other way: rendered cloud, layered skylines, volumetric
-beams. It was rejected as "too blurry, too blocky, too much", and that was the
-right call. These are flat. No blur filters anywhere, no blocks; every edge is a
-real vector edge and the only soft thing in a frame is the vignette.
+They are deliberately flat: no blur filters anywhere, every edge a real vector
+edge, and the only soft thing in a frame is the vignette. A wallpaper competes
+with your windows for the same attention and loses if it tries to be the
+subject, so these are built to sit behind a terminal all day.
 
 | File             | What it is                                                     |
 |------------------|----------------------------------------------------------------|
 | `1-grid.jpg`     | Steel hairline grid, gold axes on thirds, emblem at the origin. |
-| `2-emblem.jpg`   | The emblem as outline, off-centre, on bare ink.                 |
-| `3-rings.jpg`    | Concentric hairlines off a centre near the right edge, one measured gold ring. |
+| `2-emblem.jpg`   | The emblem as a dark mass with a gold rim, off-center.          |
+| `3-rings.jpg`    | Concentric hairlines off a center near the right edge, one measured gold ring. |
 
-The emblem appears in all three at a different scale each time — the subject in
+The emblem appears in all three at a different scale each time: the subject in
 one, a mark at a grid origin in another, the source of the sweep in the third.
 That is what makes them a set rather than three unrelated images.
 
-`src/bat.py` holds the emblem, authored as cubic beziers. An earlier version
-built it from straight line segments and it read as a sawblade — the classic
-emblem's trailing edge is a run of smooth scallops between sharp downward
-spikes, and polylines cannot make that. Two constraints the shape depends on
-are noted in that file: the wing's top edge must never dip below the shoulder
-(when it sags, the head reads as a crown perched on a separate boomerang), and
-the notch between the ears stays narrow and shallow.
+`src/bat.py` holds the emblem, authored as cubic beziers rather than straight
+segments: the trailing edge is a run of smooth scallops between sharp downward
+spikes, which polylines cannot produce. Two constraints the shape depends on
+are noted in that file. The wing's top edge must never dip below the shoulder,
+or the head reads as a crown sitting on a separate shape. The notch between the
+ears stays narrow and shallow.
 
 `src/flat.py` composes the three wallpapers, `src/render.sh` renders everything.
 
@@ -111,8 +110,8 @@ the notch between the ears stays narrow and shallow.
 
 These are near-black grounds with a wide vignette. At 8 bits per channel that
 gradient bands into visible concentric rings without a dither, so `render.sh`
-adds Gaussian noise after rasterising. Do not move it into the SVG as an
-`feTurbulence` overlay — librsvg flattens that into a uniform +3-level wash,
+adds Gaussian noise after rasterizing. Do not move it into the SVG as an
+`feTurbulence` overlay: librsvg flattens that into a uniform +3-level wash,
 which pushes the ground off `--ink-900`.
 
 ## Neovim and VS Code
