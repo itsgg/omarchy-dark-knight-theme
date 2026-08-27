@@ -1,0 +1,48 @@
+# Dark Knight — gold and steel on ink.
+# Ported from the itsgg.com design system (_sass/itsgg/_tokens.scss).
+# Primitive -> Omarchy key mapping is noted per line; the site's semantic
+# tokens (--accent-primary, --link, --text-*) resolve to the same hexes.
+
+mode = "dark"
+
+accent    = "#c9a227"  # --gold-500   : active nav, buttons, borders
+selection = "#423818"  # --selection-bg (gold 28% over --ink-900), flattened
+muted     = "#545a64"  # midpoint of --line-600 and --slate-500
+
+background        = "#0e0f12"  # --ink-900  : --bg-base
+dark_background   = "#0a0b0d"  # one step under the base, for recessed chrome
+darker_background = "#070809"  # deepest well
+lighter_background = "#1e2127" # --ink-700  : --bg-elevated
+
+foreground        = "#d2d6dc"  # --paper-100 : --text-primary
+dark_foreground   = "#7e8694"  # --slate-500 : --text-muted
+light_foreground  = "#9ba3b0"  # --slate-400 : --text-secondary
+bright_foreground = "#e6eaf0"  # pre-softening paper, kept for max-contrast text
+
+# Window borders: the gold ramp, --gold-500 -> --gold-400, at the 45deg the
+# design system uses for its accent sweep. Inactive is --line-600.
+hyprland_active_border   = "rgba(c9a227ee) rgba(e0bc46ee) 45deg"
+hyprland_inactive_border = "rgb(2a2e35)"
+
+# Terminal selection mirrors --selection-bg / --selection-fg.
+selection_background = "#423818"
+selection_foreground = "#ffffff"
+
+# ANSI. The design system only defines gold, steel, success and error, so the
+# remaining slots are derived in-family rather than borrowed from a stock
+# palette: warm hues bend toward the brass, cool hues toward the steel.
+red     = "#f85149"  # --error
+yellow  = "#e0bc46"  # --gold-400
+orange  = "#d98b3a"  # brass shifted toward --error
+green   = "#3fb950"  # --success
+cyan    = "#7ab8c9"  # --steel-300 shifted cyan
+blue    = "#5b8db8"  # --steel-500 : --link
+magenta = "#9d86c4"  # dusted violet, the one hue outside gold/steel
+brown   = "#7b5b40"  # leather, between --brown territory and the brass
+
+bright_red     = "#ff6b63"
+bright_yellow  = "#f0d271"
+bright_green   = "#56d364"
+bright_cyan    = "#9ad3e0"
+bright_blue    = "#84b0d8"  # --steel-300 : --link-hover
+bright_magenta = "#b9a3d9"
