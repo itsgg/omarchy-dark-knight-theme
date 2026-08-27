@@ -36,7 +36,7 @@ applies.
 The bat is drawn from scratch in `src/bat.py` — it is a fan rendition, not a
 copy of any official artwork. Batman and the bat emblem are trademarks of DC
 Comics. This is an unofficial, non-commercial fan theme with no affiliation
-with or endorsement by DC.
+with or endorsement by DC. See [NOTICE](NOTICE).
 
 ## Token mapping
 
