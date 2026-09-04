@@ -35,7 +35,7 @@ INK    = _c("background")          # the ground
 INK8   = _c("lighter_background")  # the one step up, for flat blocks
 ACCENT = _c("accent")              # the emblem and every drawn mark
 STEEL  = _c("muted")               # structure that must not compete
-GOLD   = ACCENT                    # the emblem was gold; the accent is not gold now
+GOLD   = ACCENT                    # name kept for the drawing code below; there is no gold in this theme
 
 VIGNETTE = f'''
 <radialGradient id="vig" cx="0.5" cy="0.46" r="0.78">

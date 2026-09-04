@@ -13,14 +13,19 @@
 # saturation for its lightness. Hierarchy is carried by lightness alone,
 # which is how the photograph is built. Nothing is imported.
 #
-# The accent is the same hue with saturation turned up to 52%, the one
-# axis the photograph leaves unused: it never exceeds 32%, so the accent
-# reads as deliberate while remaining the same colour as everything else.
+#   peak chroma  13.1, the most colourful thing in the image
 #
-# Gold is not the accent any more. It is the warning colour, and it gets
-# roughly the share of the screen it has in the picture. A warm hue is
-# doing its job when it is foreign to everything around it; that is what
-# a warning is, and it is not what a window frame is.
+# The accent is the image's own hue, measured in Lab because that is where
+# it is placed, carried at chroma 32: past anything in the
+# photograph, so it reads as deliberate while staying the same colour as
+# everything around it.
+#
+# A monochrome photograph has no red and no green and a terminal needs
+# them anyway, so the image sets the envelope rather than the hue. It
+# fixes how colourful anything may be (chroma 23 for the ANSI set,
+# under the accent) and how light; the hues are then positions on the
+# wheel, spaced far enough apart that the audit's distance floors pass.
+# There is no gold and no imported accent.
 
 mode = "dark"
 
@@ -32,56 +37,56 @@ lighter_background       = "#162128"  # contrast  1.17:1 on the base
 
 # Structure and text, up the same ramp. Body text needs 4.5:1, UI 3:1.
 line                     = "#283943"  # contrast  1.60:1 on the base
-muted                    = "#607786"  # contrast  4.08:1 on the base
-dark_foreground          = "#84949E"  # contrast  6.12:1 on the base
+muted                    = "#5D7583"  # contrast  3.95:1 on the base
+dark_foreground          = "#7F919C"  # contrast  5.86:1 on the base
 light_foreground         = "#A1AAB0"  # contrast  8.11:1 on the base
 foreground               = "#CCCFD1"  # contrast 12.23:1 on the base
 bright_foreground        = "#ECEDEE"  # contrast 16.33:1 on the base
 cursor                   = "#CCCFD1"  # contrast 12.23:1 on the base
 
 # The accent, and what it paints.
-accent                   = "#6CB0D0"  # contrast  7.98:1 on the base
-accent_dim               = "#3C7C9A"  # contrast  4.14:1 on the base
-selection                = "#1D2D35"  # contrast  1.35:1 on the base
-selection_background     = "#1D2D35"  # contrast  1.35:1 on the base
+accent                   = "#4F9EC9"  # contrast  6.44:1 on the base
+accent_dim               = "#236A8C"  # contrast  3.20:1 on the base
+selection                = "#0C2B3A"  # contrast  1.30:1 on the base
+selection_background     = "#0C2B3A"  # contrast  1.30:1 on the base
 selection_foreground     = "#ECEDEE"  # contrast 16.33:1 on the base
 
 # Window borders.
-hyprland_active_border   = "rgba(6CB0D0ee) rgba(3C7C9Aee) 45deg"
+hyprland_active_border   = "rgba(4F9EC9ee) rgba(236A8Cee) 45deg"
 hyprland_inactive_border = "rgba(283943cc)"
 
 # Semantic and ANSI. Gold is the warning.
-red                      = "#B57069"  # contrast  5.00:1 on the base
-yellow                   = "#BFAB69"  # contrast  8.43:1 on the base
-orange                   = "#BD976B"  # contrast  7.11:1 on the base
-green                    = "#85AD92"  # contrast  7.65:1 on the base
-cyan                     = "#74B4B2"  # contrast  8.12:1 on the base
-blue                     = "#749BB4"  # contrast  6.46:1 on the base
-magenta                  = "#A58BB1"  # contrast  6.31:1 on the base
-brown                    = "#7C6550"  # contrast  3.49:1 on the base
+red                      = "#BF878C"  # contrast  6.43:1 on the base
+yellow                   = "#A1966D"  # contrast  6.47:1 on the base
+orange                   = "#B88D75"  # contrast  6.48:1 on the base
+green                    = "#7B9F7E"  # contrast  6.47:1 on the base
+cyan                     = "#5BA1A3"  # contrast  6.45:1 on the base
+blue                     = "#8E93BC"  # contrast  6.43:1 on the base
+magenta                  = "#B389A7"  # contrast  6.43:1 on the base
+brown                    = "#755845"  # contrast  2.95:1 on the base
 
 # Bright variants.
-bright_red               = "#CF958F"  # contrast  7.61:1 on the base
-bright_yellow            = "#D1C394"  # contrast 10.89:1 on the base
-bright_green             = "#B0CFBA"  # contrast 11.38:1 on the base
-bright_cyan              = "#A9D1CF"  # contrast 11.58:1 on the base
-bright_blue              = "#A1BDCE"  # contrast  9.74:1 on the base
-bright_magenta           = "#C4B0CF"  # contrast  9.53:1 on the base
+bright_red               = "#E9AEB3"  # contrast 10.18:1 on the base
+bright_yellow            = "#C9BC92"  # contrast 10.11:1 on the base
+bright_green             = "#A1C6A4"  # contrast 10.14:1 on the base
+bright_cyan              = "#82C9CA"  # contrast 10.17:1 on the base
+bright_blue              = "#B4B9E4"  # contrast 10.03:1 on the base
+bright_magenta           = "#DAAFCE"  # contrast 10.03:1 on the base
 
 # The 16 slots, for anything reading them directly.
 color0  = "#0A1014"
-color1  = "#B57069"
-color2  = "#85AD92"
-color3  = "#BFAB69"
-color4  = "#749BB4"
-color5  = "#A58BB1"
-color6  = "#74B4B2"
+color1  = "#BF878C"
+color2  = "#7B9F7E"
+color3  = "#A1966D"
+color4  = "#8E93BC"
+color5  = "#B389A7"
+color6  = "#5BA1A3"
 color7  = "#CCCFD1"
 color8  = "#283943"
-color9  = "#CF958F"
-color10 = "#B0CFBA"
-color11 = "#D1C394"
-color12 = "#A1BDCE"
-color13 = "#C4B0CF"
-color14 = "#A9D1CF"
+color9  = "#E9AEB3"
+color10 = "#A1C6A4"
+color11 = "#C9BC92"
+color12 = "#B4B9E4"
+color13 = "#DAAFCE"
+color14 = "#82C9CA"
 color15 = "#ECEDEE"

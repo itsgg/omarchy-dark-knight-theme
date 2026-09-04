@@ -15,17 +15,17 @@ hover-cursor-border-width = 1
 hover-cursor-border-alpha = 0.25
 
 # Focus: where you are. The accent, outlined.
-focus-color        = "#6CB0D0"
+focus-color        = "#4F9EC9"
 focus-fill-alpha   = 0.10
-focus-border       = "#6CB0D0"
+focus-border       = "#4F9EC9"
 focus-border-width = 1
 focus-border-alpha = 0.45
 
 # Selected: what you chose. The accent, filled rather than outlined, so
 # focus and selection are still saying two different things.
-selected-color        = "#6CB0D0"
+selected-color        = "#4F9EC9"
 selected-fill-alpha   = 0.16
-selected-border       = "#6CB0D0"
+selected-border       = "#4F9EC9"
 selected-border-width = 0
 selected-border-alpha = 1.0
 

@@ -11,6 +11,14 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Everything derived from colors.toml, not only the wallpapers. gtk.css and
+# shell.controls.toml were left out once and a wallpaper change silently left
+# GTK and the shell wearing the previous palette.
+python3 gtk.py >../gtk.css
+python3 controls.py >../shell.controls.toml
+echo "gtk.css"
+echo "shell.controls.toml"
+
 python3 flat.py >/dev/null
 
 for f in [0-9]-*.svg; do

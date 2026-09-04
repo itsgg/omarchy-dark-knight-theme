@@ -60,11 +60,12 @@ def sample(path, buckets=16):
             continue
         r, g, b = (int(hx[i:i + 2], 16) / 255 for i in (0, 2, 4))
         h, l, s = colorsys.rgb_to_hls(r, g, b)
-        rows.append((n, h * 360, s * 100, l * 100))
+        rows.append((n, hx, h * 360, s * 100, l * 100))
     if not rows:
         raise SystemExit(f"palette: nothing parsed from {path}; is it an image?")
     total = sum(r[0] for r in rows)
-    return [(n / total, h, s, l) for n, h, s, l in sorted(rows, key=lambda r: -r[0])]
+    return [(n / total, hx, h, s, l)
+            for n, hx, h, s, l in sorted(rows, key=lambda r: -r[0])]
 
 
 def axis(rows):
@@ -73,7 +74,7 @@ def axis(rows):
     Weighted by share, and only over samples with enough saturation to carry a
     hue: a near-black pixel has a hue, but it is noise.
     """
-    lit = [(w, h, s, l) for w, h, s, l in rows if s > 5]
+    lit = [(w, h, s, l) for w, _, h, s, l in rows if s > 5]
     if not lit:
         raise SystemExit(
             "palette: this image has no colour to build on (nothing above 5% "
@@ -92,6 +93,25 @@ def axis(rows):
     cov = sum(w * (l - ml) * (s - ms) for w, _, s, l in lit)
     slope = cov / var if var else 0.0
     return hue, slope, ms - slope * ml
+
+
+def lab_hue(rows):
+    """The image's hue in Lab, which is not the same angle as its hue in HLS.
+
+    Placing the accent at the HLS hue but in Lab space turned an ice blue into
+    a teal. The ramp is still built with HLS because it is a straight lightness
+    ladder; anything colourful is placed in Lab, so its hue is measured there.
+    """
+    lit = [(w, hx) for w, hx, _, _, _ in rows if chroma_of(hx) > 3]
+    if not lit:
+        raise SystemExit("palette: this image has no colour to build on")
+    x = y = 0.0
+    for w, hx in lit:
+        _, a, b = lab(hx)
+        h = math.atan2(b, a)
+        x += w * math.cos(h)
+        y += w * math.sin(h)
+    return math.degrees(math.atan2(y, x)) % 360
 
 
 def hexof(h, s, l):
@@ -132,6 +152,58 @@ def lab(hx):
     return (116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz))
 
 
+def _from_lin(c):
+    c = max(0.0, min(1.0, c))
+    return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+
+
+def lch(light, chroma, hue_deg, _shrink=0.995):
+    """An sRGB colour at a given lightness, chroma and hue.
+
+    Chroma is perceptual; HLS saturation is not. Equalising the ANSI set on
+    HLS saturation put green, magenta and cyan at the same number as blue and
+    they read twice as colourful, so the terminal palette looked like a
+    different theme from the interface around it. Everything colourful here is
+    now placed by chroma instead, which is what makes one hue read as loud as
+    another.
+
+    Out-of-gamut requests are answered by walking the chroma down rather than
+    by clipping the channels, because clipping shifts the hue.
+    """
+    if not 0 <= light <= 100:
+        raise SystemExit(f"palette: lightness {light} is outside 0 to 100")
+    # Zero chroma is a grey, not a failure. The loop below never ran for it and
+    # the function returned black for every achromatic request.
+    floor = 1e-4
+    while True:
+        h = math.radians(hue_deg)
+        a, b = chroma * math.cos(h), chroma * math.sin(h)
+        fy = (light + 16) / 116
+        fx, fz = fy + a / 500, fy - b / 200
+        f = lambda v: v ** 3 if v ** 3 > 0.008856 else (v - 16 / 116) / 7.787
+        x, y, z = f(fx) * 0.95047, f(fy), f(fz) * 1.08883
+        r = 3.2406 * x - 1.5372 * y - 0.4986 * z
+        g = -0.9689 * x + 1.8758 * y + 0.0415 * z
+        bl = 0.0557 * x - 0.2040 * y + 1.0570 * z
+        if all(-0.001 <= v <= 1.001 for v in (r, g, bl)):
+            return "#{:02X}{:02X}{:02X}".format(
+                *(round(_from_lin(v) * 255) for v in (r, g, bl)))
+        if chroma <= floor:
+            # Walking chroma down cannot reach the gamut, which means the
+            # lightness itself is unreachable. Returning black here would be a
+            # wrong colour presented as an answer; without a floor the shrink
+            # runs into subnormal floats and never terminates.
+            raise SystemExit(
+                f"palette: no sRGB colour at lightness {light} and hue "
+                f"{hue_deg}, at any chroma")
+        chroma *= _shrink
+
+
+def chroma_of(hx):
+    _, a, b = lab(hx)
+    return (a * a + b * b) ** 0.5
+
+
 def distance(a, b):
     """CIE76. Rough, and enough to answer "can these two be told apart"."""
     la, lb = lab(a), lab(b)
@@ -170,10 +242,25 @@ def raise_until(make, start, ok, limit=99.0):
         "misses it.")
 
 
+# Perceptual chroma, not HLS saturation, and measured rather than asserted.
+# Both of these were fixed numbers once, which meant a vivid wallpaper would
+# have got the same quiet accent as a near-monochrome one. They are multiples
+# of the image's own peak chroma now, so the theme is as colourful as the
+# picture warrants: the accent clearly past anything in the image, the ANSI set
+# under the accent so nothing ever outshouts the thing that means "here".
+ACCENT_OVER_IMAGE = 2.4
+ANSI_OVER_IMAGE = 1.75
+ANSI_LIGHT = 62.0
+
+
 def build(path):
     rows = sample(path)
     hue, slope, intercept = axis(rows)
-    warm = sum(w for w, h, s, _ in rows if (h < 70 or h > 320) and s > 8)
+    warm = sum(w for w, _, h, s, _ in rows if (h < 70 or h > 320) and s > 8)
+    accent_hue = lab_hue(rows)
+    peak_chroma = max(chroma_of(hx) for _, hx, _, _, _ in rows)
+    accent_chroma = peak_chroma * ACCENT_OVER_IMAGE
+    ansi_chroma = peak_chroma * ANSI_OVER_IMAGE
 
     # Ground: below the image's own dominant, so a window sits on the picture
     # rather than being cut out of it.
@@ -200,13 +287,13 @@ def build(path):
     # The accent: the same hue, on the axis the image never uses. The
     # photograph peaks at 32% saturation, so this is recognisably deliberate
     # and cannot read as foreign.
-    p["accent"] = hexof(hue - 4, 52, 62)
+    p["accent"] = lch(ANSI_LIGHT, accent_chroma, accent_hue)
     # Exported rather than a local, so the preview's card border and the window
     # border are the same two colours by construction. It was a local once, the
     # preview repeated its value as a literal, and the two drifted apart the
     # first time the accent moved.
-    p["accent_dim"] = hexof(hue - 4, 44, 42)
-    p["selection"] = hexof(hue - 4, 30, 16)
+    p["accent_dim"] = lch(42, accent_chroma * 0.85, accent_hue)
+    p["selection"] = lch(16, accent_chroma * 0.45, accent_hue)
     p["selection_background"] = p["selection"]
     # And against the selected row, which is lighter still once the accent
     # fill is composited over it.
@@ -231,48 +318,52 @@ def build(path):
     p["hyprland_active_border"] = f'rgba({p["accent"][1:]}ee) rgba({p["accent_dim"][1:]}ee) 45deg'
     p["hyprland_inactive_border"] = f'rgba({p["line"][1:]}cc)'
 
-    # Semantic and ANSI. Held to the lightness band the steel occupies and to
-    # roughly the saturation the image tops out at, so nothing shouts louder
-    # than the picture. Gold is the warning, which is the one place a hue
-    # foreign to everything else is doing its job.
-    # Gold, at the design system's own hue (46 degrees, --gold-500) but held
-    # to the family's saturation band. The literal #C9A227 sits at 68%
-    # saturation and 47% lightness, where the rest of the ANSI set is 20 to
-    # 38% and 56 to 62%: it was both louder than the accent and darker than
-    # its neighbours, so terminal yellow shouted over the focus colour while
-    # appearing far more often. The hue is what makes gold read as foreign,
-    # which is the whole job of a warning; the saturation was only making it
-    # shout.
-    p["yellow"] = hexof(46, 40, 58)
-    p["red"] = hexof(6, 34, 56)
-    p["green"] = hexof(140, 20, 60)
-    p["orange"] = hexof(32, 38, 58)
-    # Far enough from blue to be a different colour. It was 188 degrees and
-    # came out at CIE76 13.3 from blue, which is close enough to confuse.
-    p["cyan"] = raise_until(
-        lambda l: hexof(178, 30, l), 58.0,
-        lambda c: distance(c, hexof(hue, 30, 58)) >= 18.0)
-    p["blue"] = hexof(hue, 30, 58)
-    p["magenta"] = hexof(280, 20, 62)
-    p["brown"] = hexof(28, 22, 40)
-    # A bright slot that cannot be told from its normal slot is a wasted slot.
-    # Written as a floor rather than as a lightness, because at these
-    # saturations a fixed ten-point step is not enough for every hue: green and
-    # cyan came out at CIE76 9.3 and 8.9, which is inside the range where two
-    # terminal colours read as the same one.
-    for slot, (h, s) in {"red": (6, 40), "green": (140, 24), "cyan": (178, 30),
-                         "blue": (hue, 32), "magenta": (280, 24)}.items():
+    # Semantic and ANSI.
+    #
+    # The photograph is one hue, so red and green are not in it and cannot be.
+    # A terminal needs them anyway. The honest way to derive them from an image
+    # that does not contain them is to let the image set the envelope rather
+    # than the hue: it decides how saturated anything may be and how light,
+    # and the hues are then placed at the widest mutual separation inside that
+    # envelope.
+    #
+    # The ceiling is the image's own peak saturation, lifted a little so these
+    # read as interface rather than as part of the photograph, and capped below
+    # the accent so nothing ever shouts louder than the thing that means
+    # "here". An earlier palette put gold at 68% against an accent at 52% and a
+    # family at 20 to 38%, and terminal yellow outshouted the focus colour on
+    # every screen that had both.
+    # Hue anchors, far apart and still recognisable as the colour their slot
+    # is named after. Nothing here is borrowed from a design system; the
+    # numbers are only positions on the wheel, and they are placed at one
+    # perceptual chroma so no hue is louder than another.
+    #
+    # Terminal blue does not sit on the image's hue. That is the accent's, and
+    # putting blue there too made the two CIE76 6.9 apart, separated only by
+    # colourfulness, on screens that show both constantly. Cyan moves off blue
+    # for the same reason.
+    ANCHORS = {"red": 15, "orange": 55, "yellow": 95, "green": 145,
+               "cyan": 200, "blue": 288, "magenta": 335, "brown": 60}
+    for slot, h in ANCHORS.items():
+        if slot == "brown":
+            p[slot] = lch(40.0, ansi_chroma * 0.8, h)
+        else:
+            p[slot] = lch(ANSI_LIGHT, ansi_chroma, h)
+    # Bright slots are the same hue and chroma, raised in lightness until they
+    # can actually be told from their normal counterpart. A floor rather than a
+    # fixed step, because at one chroma a fixed step is not enough for every
+    # hue: green and cyan once came out at CIE76 9.3 and 8.9, inside the range
+    # where two terminal colours read as one.
+    for slot in ("red", "yellow", "green", "cyan", "blue", "magenta"):
+        h = ANCHORS[slot]
         p["bright_" + slot] = raise_until(
-            lambda l, h=h, s=s: hexof(h, s, l), 64.0,
+            lambda l, h=h: lch(l, ansi_chroma, h), ANSI_LIGHT + 2,
             lambda c, slot=slot: distance(c, p[slot]) >= 14.0)
-    p["bright_yellow"] = raise_until(
-        lambda l: hexof(46, 40, l), 64.0,
-        lambda c: distance(c, p["yellow"]) >= 14.0)
 
     ansi = ["background", "red", "green", "yellow", "blue", "magenta", "cyan",
             "foreground", "line", "bright_red", "bright_green", "bright_yellow",
             "bright_blue", "bright_magenta", "bright_cyan", "bright_foreground"]
-    return p, ansi, hue, slope, intercept, warm
+    return p, ansi, hue, slope, intercept, warm, peak_chroma
 
 
 # The three forms a value in this file may take: a hex colour, a single
@@ -283,7 +374,7 @@ VALUE = re.compile(
     r"|rgba\([0-9A-Fa-f]{8}\) rgba\([0-9A-Fa-f]{8}\) \d{1,3}deg)$")
 
 
-def emit(p, ansi, hue, slope, intercept, warm, path):
+def emit(p, ansi, hue, slope, intercept, warm, peak, path):
     bg = p["background"]
     w = sys.stdout.write
     # Every value is written between quotes into TOML, so every value is
@@ -307,13 +398,17 @@ def emit(p, ansi, hue, slope, intercept, warm, path):
     w("# So every structural colour below is that one hue, with the image's own\n")
     w("# saturation for its lightness. Hierarchy is carried by lightness alone,\n")
     w("# which is how the photograph is built. Nothing is imported.\n#\n")
-    w("# The accent is the same hue with saturation turned up to 52%, the one\n")
-    w("# axis the photograph leaves unused: it never exceeds 32%, so the accent\n")
-    w("# reads as deliberate while remaining the same colour as everything else.\n#\n")
-    w("# Gold is not the accent any more. It is the warning colour, and it gets\n")
-    w("# roughly the share of the screen it has in the picture. A warm hue is\n")
-    w("# doing its job when it is foreign to everything around it; that is what\n")
-    w("# a warning is, and it is not what a window frame is.\n\n")
+    w(f"#   peak chroma  {peak:.1f}, the most colourful thing in the image\n#\n")
+    w("# The accent is the image's own hue, measured in Lab because that is where\n")
+    w(f"# it is placed, carried at chroma {peak * ACCENT_OVER_IMAGE:.0f}: past anything in the\n")
+    w("# photograph, so it reads as deliberate while staying the same colour as\n")
+    w("# everything around it.\n#\n")
+    w("# A monochrome photograph has no red and no green and a terminal needs\n")
+    w("# them anyway, so the image sets the envelope rather than the hue. It\n")
+    w(f"# fixes how colourful anything may be (chroma {peak * ANSI_OVER_IMAGE:.0f} for the ANSI set,\n")
+    w("# under the accent) and how light; the hues are then positions on the\n")
+    w("# wheel, spaced far enough apart that the audit's distance floors pass.\n")
+    w("# There is no gold and no imported accent.\n\n")
     w('mode = "dark"\n\n')
 
     def block(title, keys):
@@ -372,6 +467,13 @@ def audit(p):
         if d < 14.0:
             bad.append(f"bright_{slot} is CIE76 {d:.1f} from {slot}, floor 14")
     for a, b, floor in (("blue", "cyan", 18.0), ("green", "cyan", 14.0),
+                        # The accent and terminal blue both sit at the image's
+                        # hue and appear on the same screen constantly, so they
+                        # have to be separable too.
+                        ("accent", "blue", 12.0),
+                        # Warm neighbours, which sit closest of any pair here:
+                        # red and orange were CIE76 12.4 apart at 25 and 55.
+                        ("red", "orange", 14.0), ("orange", "yellow", 14.0),
                         ("red", "green", 25.0),
                         ("yellow", "accent", 25.0), ("accent", "foreground", 20.0)):
         d = distance(p[a], p[b])
@@ -383,17 +485,14 @@ def audit(p):
     # yellow was at 68% saturation against an accent at 52% and a family at
     # 20 to 38%, so the warning colour outshouted the focus colour on every
     # screen that had both.
-    def sat(hx):
-        import colorsys
-        r, g, b = (int(hx.lstrip("#")[i:i + 2], 16) / 255 for i in (0, 2, 4))
-        return colorsys.rgb_to_hls(r, g, b)[2] * 100
-    ceiling = sat(p["accent"])
+    ceiling = chroma_of(p["accent"])
+    sat = chroma_of
     for slot in ("red", "green", "yellow", "blue", "magenta", "cyan", "orange",
                  "bright_red", "bright_green", "bright_yellow", "bright_blue",
                  "bright_magenta", "bright_cyan"):
         if sat(p[slot]) > ceiling:
-            bad.append(f"{slot} is more saturated than the accent "
-                       f"({sat(p[slot]):.0f}% against {ceiling:.0f}%)")
+            bad.append(f"{slot} carries more chroma than the accent "
+                       f"({sat(p[slot]):.0f} against {ceiling:.0f})")
     for line in bad:
         print(f"palette: {line}", file=sys.stderr)
     return len(bad)
