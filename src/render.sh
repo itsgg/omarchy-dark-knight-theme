@@ -26,7 +26,19 @@ done
 # -- on 2-emblem the bat ends up behind the terminal and only a stray wing shows.
 # No dither here: the card has no wide near-black gradient to band, and skipping
 # it takes the PNG from 2.4M to ~150K.
-rsvg-convert -w 1800 -h 1012 preview-overlay.svg -o /tmp/dk-overlay.png
+# The overlay is a template: every colour in it is a {{key}} from colors.toml,
+# resolved here. It used to hold literal hexes, which meant the preview kept
+# showing the palette the theme had when somebody last edited the SVG by hand.
+python3 - <<'RESOLVE' >/tmp/dk-overlay.svg
+import pathlib, re, sys, tomllib
+p = tomllib.load(open("../colors.toml", "rb"))
+s = pathlib.Path("preview-overlay.svg").read_text()
+missing = sorted({k for k in re.findall(r"\{\{([a-z_]+)\}\}", s) if k not in p})
+if missing:
+    sys.exit("render: colors.toml has no " + ", ".join(missing))
+sys.stdout.write(re.sub(r"\{\{([a-z_]+)\}\}", lambda m: p[m.group(1)], s))
+RESOLVE
+rsvg-convert -w 1800 -h 1012 /tmp/dk-overlay.svg -o /tmp/dk-overlay.png
 magick ../backgrounds/1-grid.jpg -resize 1800x1012^ -gravity center -extent 1800x1012 \
   /tmp/dk-overlay.png -composite ../preview.png
 rm -f /tmp/dk-overlay.png

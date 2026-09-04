@@ -5,21 +5,43 @@ vector edge; the only soft thing in a frame is the vignette. The emblem appears
 in all three at a different scale each time -- large as the subject, small at a
 grid origin, tiny at a ring centre -- which is what ties them together.
 """
-import sys, math
+import sys, math, pathlib, tomllib
 sys.path.insert(0, '.')
 from bat import path
 
 W, H = 3840, 2400
-INK   = "#0e0f12"   # --ink-900
-INK8  = "#16181c"   # --ink-800 / --bg-surface
-GOLD  = "#c9a227"   # --gold-500
-STEEL = "#5b8db8"   # --steel-500
+
+# Read from the palette rather than repeated here. These four were literals
+# once, and when colors.toml was rebuilt from the wallpaper on 2026-09-04 the
+# shipped wallpapers kept the old gold and became the only part of the theme
+# that did not match it. A theme's own backgrounds are the last place a stale
+# colour should survive.
+_P = tomllib.load(open(pathlib.Path(__file__).parent.parent / "colors.toml", "rb"))
+
+def _c(key):
+    """A colour from the palette, or a message naming what is missing.
+
+    A bare _P[key] raised KeyError at import time, which reports a missing
+    palette key as a traceback from inside a wallpaper generator.
+    """
+    try:
+        return _P[key]
+    except KeyError:
+        raise SystemExit(
+            f"flat.py: colors.toml has no {key!r}; regenerate it with "
+            "src/palette.py <wallpaper>")
+
+INK    = _c("background")          # the ground
+INK8   = _c("lighter_background")  # the one step up, for flat blocks
+ACCENT = _c("accent")              # the emblem and every drawn mark
+STEEL  = _c("muted")               # structure that must not compete
+GOLD   = ACCENT                    # the emblem was gold; the accent is not gold now
 
 VIGNETTE = f'''
 <radialGradient id="vig" cx="0.5" cy="0.46" r="0.78">
   <stop offset="0%"   stop-color="{INK}"   stop-opacity="0"/>
-  <stop offset="62%"  stop-color="#0a0b0d" stop-opacity="0.42"/>
-  <stop offset="100%" stop-color="#070809" stop-opacity="0.88"/>
+  <stop offset="62%"  stop-color="{_c("dark_background")}" stop-opacity="0.42"/>
+  <stop offset="100%" stop-color="{_c("darker_background")}" stop-opacity="0.88"/>
 </radialGradient>'''
 
 def svg(body, defs=""):
