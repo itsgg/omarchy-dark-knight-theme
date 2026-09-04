@@ -22,8 +22,9 @@ done
 
 # The preview card is the terminal and palette composited OVER a real wallpaper,
 # so it shows the theme as a desktop rather than as a flat swatch sheet. The
-# overlay is transparent SVG; 1-grid is the backdrop because it is the quietest
-# -- on 2-emblem the bat ends up behind the terminal and only a stray wing shows.
+# overlay is transparent SVG, and the backdrop is the wallpaper the palette was
+# derived from, so the screenshot shows the theme over the image it was built
+# for rather than over one of its own generated grounds.
 # No dither here: the card has no wide near-black gradient to band, and skipping
 # it takes the PNG from 2.4M to ~150K.
 # The overlay is a template: every colour in it is a {{key}} from colors.toml,
@@ -39,7 +40,7 @@ if missing:
 sys.stdout.write(re.sub(r"\{\{([a-z_]+)\}\}", lambda m: p[m.group(1)], s))
 RESOLVE
 rsvg-convert -w 1800 -h 1012 /tmp/dk-overlay.svg -o /tmp/dk-overlay.png
-magick ../backgrounds/1-grid.jpg -resize 1800x1012^ -gravity center -extent 1800x1012 \
+magick ../backgrounds/0-batman-dark-knight-portrait.jpg -resize 1800x1012^ -gravity center -extent 1800x1012 \
   /tmp/dk-overlay.png -composite ../preview.png
 rm -f /tmp/dk-overlay.png
 echo "preview.png"

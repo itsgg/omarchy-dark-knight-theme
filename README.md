@@ -50,10 +50,8 @@ the rest of the theme exactly rather than approximately.
 
 ## About the emblem
 
-The bat is drawn from scratch in `src/bat.py`. It is a fan rendition, not a
-copy of any official artwork. Batman and the bat emblem are trademarks of DC
-Comics. This is an unofficial, non-commercial fan theme with no affiliation
-with or endorsement by DC. See [NOTICE](NOTICE).
+The bat is drawn from scratch in `src/bat.py`, as cubic beziers rather than
+traced.
 
 ## Where the colors come from
 
@@ -76,7 +74,26 @@ them or says which it did not.
 
 ## Backgrounds
 
-Three, all generated. No stock photography, no raster source at all.
+Five: two photographs and three generated.
+
+The palette is derived from `0-batman-dark-knight-portrait.jpg`, so that one
+is the theme's reference image and the one the preview above is composited
+over. It is numbered `0-` for a reason. `omarchy-theme-set` sorts the backgrounds and
+takes the first one when the current wallpaper is not already among them, which
+is the case when you switch in from another theme; when it is among them, it
+advances to the next instead, so re-running it on the theme you are already
+using cycles. Two caveats: the sort is over full paths, so anything you drop in
+`~/.config/omarchy/backgrounds/dark-knight/` sorts ahead of everything here, and
+the advance is decided by the current path rather than by whether the theme
+changed. `1-` through `3-` are the generated grounds and `4-` is the second
+photograph.
+
+| File | |
+|---|---|
+| `0-batman-dark-knight-portrait.jpg` | the reference image; every colour in `colors.toml` is measured from it |
+| `4-batman-motorcycle-gotham.jpg` | the same world, warmer and busier; the palette is not derived from this one |
+
+The other three are generated, no raster source at all.
 
 They are deliberately flat: no blur filters anywhere, every edge a real vector
 edge, and the only soft thing in a frame is the vignette. A wallpaper competes
@@ -89,7 +106,7 @@ subject, so these are built to sit behind a terminal all day.
 | `2-emblem.jpg`   | The emblem as a dark mass with an accent rim, off-center.       |
 | `3-rings.jpg`    | Concentric hairlines off a center near the right edge, one measured accent ring. |
 
-The emblem appears in all three at a different scale each time: the subject in
+The emblem appears in all three generated grounds at a different scale each time: the subject in
 one, a mark at a grid origin in another, the source of the sweep in the third.
 That is what makes them a set rather than three unrelated images.
 
