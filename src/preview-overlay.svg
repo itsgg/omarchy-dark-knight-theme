@@ -19,8 +19,8 @@
   <rect x="1180" y="0" width="620" height="1012" fill="url(#scrim)"/>
 
   <g filter="url(#drop)">
-    <rect x="104" y="162" width="1040" height="596" rx="10" fill="url(#goldborder)"/>
-    <rect x="106" y="164" width="1036" height="592" rx="9" fill="{{background}}" fill-opacity="0.97"/>
+    <rect x="104" y="162" width="1040" height="596" fill="url(#goldborder)"/>
+    <rect x="106" y="164" width="1036" height="592" fill="{{background}}" fill-opacity="0.97"/>
   </g>
 
   <text class="m" x="144" y="226" font-size="20" fill="{{dark_foreground}}">gg@dark-knight ~</text>
@@ -42,25 +42,25 @@
 
   <text class="m" x="1318" y="268" font-size="33" fill="{{accent}}" font-weight="700">Dark Knight</text>
   <text class="m" x="1318" y="302" font-size="18" fill="{{light_foreground}}">one hue, carried by light</text>
-  <rect x="1318" y="372" width="70" height="70" rx="7" fill="{{background}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1398" y="372" width="70" height="70" rx="7" fill="{{lighter_background}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1478" y="372" width="70" height="70" rx="7" fill="{{lighter_background}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1558" y="372" width="70" height="70" rx="7" fill="{{line}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1318" y="452" width="70" height="70" rx="7" fill="{{foreground}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1398" y="452" width="70" height="70" rx="7" fill="{{light_foreground}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1478" y="452" width="70" height="70" rx="7" fill="{{dark_foreground}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1558" y="452" width="70" height="70" rx="7" fill="{{muted}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1318" y="532" width="70" height="70" rx="7" fill="{{accent}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1398" y="532" width="70" height="70" rx="7" fill="{{yellow}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1478" y="532" width="70" height="70" rx="7" fill="{{blue}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1558" y="532" width="70" height="70" rx="7" fill="{{bright_blue}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1318" y="612" width="70" height="70" rx="7" fill="{{red}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1398" y="612" width="70" height="70" rx="7" fill="{{orange}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1478" y="612" width="70" height="70" rx="7" fill="{{green}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1558" y="612" width="70" height="70" rx="7" fill="{{cyan}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1318" y="692" width="70" height="70" rx="7" fill="{{magenta}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1398" y="692" width="70" height="70" rx="7" fill="{{brown}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1478" y="692" width="70" height="70" rx="7" fill="{{selection}}" stroke="{{muted}}" stroke-width="1"/>
-  <rect x="1558" y="692" width="70" height="70" rx="7" fill="{{bright_foreground}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1318" y="372" width="70" height="70" fill="{{background}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1398" y="372" width="70" height="70" fill="{{lighter_background}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1478" y="372" width="70" height="70" fill="{{lighter_background}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1558" y="372" width="70" height="70" fill="{{line}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1318" y="452" width="70" height="70" fill="{{foreground}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1398" y="452" width="70" height="70" fill="{{light_foreground}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1478" y="452" width="70" height="70" fill="{{dark_foreground}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1558" y="452" width="70" height="70" fill="{{muted}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1318" y="532" width="70" height="70" fill="{{accent}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1398" y="532" width="70" height="70" fill="{{yellow}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1478" y="532" width="70" height="70" fill="{{blue}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1558" y="532" width="70" height="70" fill="{{bright_blue}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1318" y="612" width="70" height="70" fill="{{red}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1398" y="612" width="70" height="70" fill="{{orange}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1478" y="612" width="70" height="70" fill="{{green}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1558" y="612" width="70" height="70" fill="{{cyan}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1318" y="692" width="70" height="70" fill="{{magenta}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1398" y="692" width="70" height="70" fill="{{brown}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1478" y="692" width="70" height="70" fill="{{selection}}" stroke="{{muted}}" stroke-width="1"/>
+  <rect x="1558" y="692" width="70" height="70" fill="{{bright_foreground}}" stroke="{{muted}}" stroke-width="1"/>
   <text class="m" x="1318" y="836" font-size="16" fill="{{dark_foreground}}">itsgg.com design system</text>
 </svg>

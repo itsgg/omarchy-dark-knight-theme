@@ -87,6 +87,38 @@ The script audits its own output against those floors and exits non-zero if
 one is missed, so a palette generated from a different wallpaper either meets
 them or says which it did not.
 
+## Square corners
+
+Everything, deliberately.
+
+This theme has no other decoration: one hue, no gradients in content, no
+shadow carrying meaning, hierarchy by lightness alone. A corner radius was the
+only softening gesture in it, and it was inherited from Omarchy's default
+rather than chosen. Nearly every window on this desktop is a terminal, which is
+a monospace grid, and the 2px border is a line: both read more decisively as a
+rectangle than as a rounded one.
+
+It is set in `~/.config/hypr/looknfeel.lua`, not here, because Hyprland owns
+window rounding:
+
+```lua
+hl.config({ decoration = { rounding = 0 } })
+```
+
+The shell follows that value on its own (`Commons/Style.qml`: `cornerRadius`
+mirrors `decoration:rounding`), so the bar, menu, notifications and OSD go
+square with it. **It does not watch `looknfeel.lua`**: it re-polls Hyprland at
+startup, when a gaps toggle file changes, and when a theme is applied. So after
+changing the value the windows change immediately and the panels keep their old
+corners until something triggers that poll, and `omarchy-restart-shell` is the
+reliable one. Do not use `omarchy-refresh-shell` for this: it resets
+`shell.json` to defaults and drops any bar plugins.
+
+GTK is separate again. libadwaita rounds its widgets from its own stylesheet
+and Hyprland cannot reach inside a window, so `gtk.css` carries a blanket
+`border-radius: 0`, with circular controls left circular because a squared-off
+avatar is a different widget rather than a sharper corner.
+
 ## GTK and icons
 
 Omarchy generates seventeen surfaces from `colors.toml`, and GTK is not one of

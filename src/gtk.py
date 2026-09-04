@@ -190,6 +190,32 @@ filechooserbutton:drop(active) {
     border-color: transparent;
 }
 
+/* Square, everywhere, to match the desktop. libadwaita rounds nearly every
+   widget from its own stylesheet and Hyprland's rounding cannot reach inside a
+   window, so a square desktop with rounded GTK dialogs, buttons and popovers
+   would be the one place the decision did not hold.
+
+   The blanket rule is deliberate rather than lazy: naming widgets one at a
+   time leaves whichever one libadwaita adds next still rounded, which is the
+   same drift this theme keeps fixing elsewhere. Circular controls are left
+   alone, because a square avatar or a squared-off close button is not a
+   sharper corner, it is a different widget. */
+* {
+    border-radius: 0;
+}
+
+.circular,
+avatar,
+button.circular,
+.osd .circular,
+/* The class sits on the wrapper and the child draws the control, so matching
+   only .circular squares the button inside every circular menu button. */
+menubutton.circular > button,
+menubutton.circular > button.toggle,
+.circular > button {
+    border-radius: 9999px;
+}
+
 /* Selection, everywhere it appears. */
 selection,
 :selected {
