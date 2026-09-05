@@ -66,8 +66,206 @@ button.circular {
     border-radius: 9999px;
 }
 
-/* The file chooser: the GTK3 surface still seen every day, because
-   xdg-desktop-portal-gtk draws it for every application that opens a file. */
+/* Explicit rules for every surface, because the named colours above reach
+   almost nothing on their own.
+
+   Adwaita-dark declares `@define-color theme_bg_color #353535` and then writes
+   `#353535` as a literal in the rule that uses it, so redefining the name
+   changes no pixel. Verified by extracting its own stylesheet out of libgtk-3
+   (`/org/gtk/libgtk/theme/Adwaita/gtk-contained-dark.css`, 2039 lines):
+   `.background` is `background-color: #353535`, `.view` is `#2d2d2d`,
+   `headerbar` is a `#1b1b1b` gradient. The first version of this file defined
+   the names and wrote one rule for the sidebar, and the sidebar was the only
+   thing that changed.
+
+   The selectors below are Adwaita's own, and the literals they replace are its
+   nine most-used, which between them are every surface of a file chooser. This
+   is not a whole GTK3 theme: it recolours the widgets that appear here. The
+   ecosystem's complete answer is adw-gtk3, which is a full port built to read
+   libadwaita's names; it is not used because Omarchy's theme-set forces
+   gtk-theme back to Adwaita-dark on every apply, so it would revert. */
+
+/* Windows and dialogs: Adwaita #353535. */
+window,
+dialog,
+.background,
+messagedialog .titlebar {
+    background-color: @background;
+    color: @foreground;
+}
+
+/* Header bars: Adwaita's #1b1b1b gradient. background-image: none, or the
+   gradient survives the background-color and the bar stays grey. */
+headerbar,
+headerbar:backdrop,
+.titlebar,
+.titlebar:backdrop {
+    background-image: none;
+    background-color: @background;
+    color: @foreground;
+    border-color: @line;
+    box-shadow: none;
+}
+
+/* Views: lists, trees, icon views, text views. Adwaita #2d2d2d. */
+.view,
+iconview,
+.view text,
+iconview text,
+textview text,
+treeview.view,
+list,
+list row,
+scrolledwindow viewport {
+    background-color: @recessed;
+    color: @foreground;
+}
+
+/* The sidebar, raised above the list it sits beside. */
+.sidebar,
+placessidebar,
+placessidebar list,
+placessidebar row,
+.sidebar list {
+    background-color: @surface;
+    color: @foreground;
+}
+
+/* Buttons: Adwaita paints a gradient and a border. */
+button,
+button:backdrop {
+    background-image: none;
+    background-color: @surface;
+    color: @foreground;
+    border-color: @line;
+    text-shadow: none;
+    box-shadow: none;
+}
+
+button:hover {
+    background-color: @line;
+}
+
+button:active,
+button:checked {
+    background-color: @accent_dim;
+    color: @bright_white;
+}
+
+button:disabled {
+    background-color: @recessed;
+    color: @muted;
+}
+
+button.suggested-action {
+    background-color: @accent_dim;
+    color: @bright_white;
+    border-color: @accent_dim;
+}
+
+button.destructive-action {
+    background-color: @red;
+    color: @background;
+    border-color: @red;
+}
+
+/* The action classes sit at the same specificity as button:disabled and come
+   after it, so without these a disabled Select or Open button keeps its
+   enabled colours and hover feedback disappears. The file chooser's own
+   confirm button is a suggested-action, so this is the one that mattered. */
+button.suggested-action:hover {
+    background-color: @accent;
+    color: @background;
+}
+
+button.destructive-action:hover {
+    background-color: @bright_red;
+    color: @background;
+}
+
+button.suggested-action:disabled,
+button.destructive-action:disabled {
+    background-color: @recessed;
+    color: @muted;
+    border-color: @line;
+}
+
+/* Entries, including the file chooser's search and location bars. */
+entry,
+entry:backdrop,
+spinbutton:not(.vertical) {
+    background-image: none;
+    background-color: @recessed;
+    color: @foreground;
+    border-color: @line;
+    box-shadow: none;
+}
+
+entry:focus {
+    border-color: @accent;
+}
+
+/* Selection: Adwaita #15539e. */
+selection,
+:selected,
+:selected:focus,
+.view:selected,
+list row:selected,
+treeview.view:selected,
+placessidebar row:selected {
+    background-color: @accent_dim;
+    color: @bright_white;
+}
+
+/* Structure: Adwaita's #070707 borders and its separators. */
+/* background-image: none, because Adwaita paints the pane divider as
+   `image(#1b1b1b)` rather than as a colour, and an image sits above whatever
+   background-color is set underneath it. */
+separator,
+.separator,
+paned > separator {
+    background-image: none;
+    background-color: @line;
+    color: @line;
+}
+
+scrollbar,
+scrollbar:backdrop {
+    background-color: @background;
+    border-color: @line;
+}
+
+scrollbar slider {
+    background-color: @muted;
+}
+
+scrollbar slider:hover {
+    background-color: @dim;
+}
+
+/* Links and anything Adwaita paints in its own accent. */
+*:link,
+label:link {
+    color: @accent;
+}
+
+/* A link inside a selected row would otherwise be the accent on the dim
+   accent, which measures 2.01:1 and is unreadable. */
+:selected *:link,
+:selected label:link,
+*:link:selected {
+    color: @bright_white;
+}
+
+/* Tooltips. */
+tooltip,
+tooltip.background {
+    background-color: @surface;
+    color: @foreground;
+    border: 1px solid @line;
+}
+
+/* The file chooser's own chrome. */
 filechooser .dialog-action-box,
 filechooser #pathbarbox {
     border-color: @line;
@@ -76,17 +274,4 @@ filechooser #pathbarbox {
 filechooser .dialog-action-box:backdrop,
 filechooser #pathbarbox:backdrop {
     border-color: @recessed;
-}
-
-.sidebar,
-placessidebar,
-placessidebar list {
-    background-color: @surface;
-    color: @foreground;
-}
-
-selection,
-:selected {
-    background-color: @accent_dim;
-    color: @bright_white;
 }
