@@ -15,8 +15,10 @@ cd "$(dirname "$0")"
 # shell.controls.toml were left out once and a wallpaper change silently left
 # GTK and the shell wearing the previous palette.
 python3 gtk.py >../gtk.css
+python3 gtk.py --gtk3 >../gtk3.css
 python3 controls.py >../shell.controls.toml
 echo "gtk.css"
+echo "gtk3.css"
 echo "shell.controls.toml"
 
 python3 flat.py >/dev/null

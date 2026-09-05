@@ -133,12 +133,24 @@ what stops a stock blue turning up in a selection or a link, and it maps the
 theme's ramp onto depth: windows on the base, the file view recessed below it,
 sidebars, cards and popovers raised above it.
 
-**It needs one symlink to do anything.** Nothing in Omarchy copies a theme's
-`gtk.css` anywhere GTK looks, so on its own the file is inert:
+**They need two symlinks to do anything.** Nothing in Omarchy copies a theme's
+`gtk.css` anywhere GTK looks, so on their own the files are inert:
 
 ```sh
-ln -sfn ~/.local/state/omarchy/current/theme/gtk.css ~/.config/gtk-4.0/gtk.css
+ln -sfn ~/.local/state/omarchy/current/theme/gtk.css  ~/.config/gtk-4.0/gtk.css
+ln -sfn ~/.local/state/omarchy/current/theme/gtk3.css ~/.config/gtk-3.0/gtk.css
 ```
+
+Two files rather than one, because GTK3 does not know `alertdialog`, `banner`,
+`toast` or `menubutton`, and it is still the toolkit behind
+`xdg-desktop-portal-gtk`, which draws the file chooser every application opens.
+That chooser was the last surface wearing stock Adwaita. Measured after the
+GTK3 file landed: header `#0B1116`, sidebar `#0A1115`, list `#0D1317`, border
+`#25698A`, which are this theme's colours rather than Adwaita's `#353535` and
+`#2d2d2d`.
+
+`xdg-desktop-portal-gtk` caches its stylesheet, so restart it (or log out)
+after the first link or the chooser keeps its old look.
 
 Pointing at `current/theme` rather than at this theme means it follows theme
 switches on its own, and any theme shipping a `gtk.css` gets picked up too.
