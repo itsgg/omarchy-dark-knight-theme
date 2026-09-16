@@ -49,6 +49,36 @@ and applies itself. To switch back to it later:
 omarchy theme set "Dark Knight"
 ```
 
+### Or as a working copy, which is what gets `neovim.lua`
+
+`omarchy theme install` clones into `~/.config/omarchy/themes`, and a clone
+there came from a stranger, so `omarchy-theme-set` holds it to a list that
+drops any `.lua` at the top of the theme, which is the only place `neovim.lua`
+can be: Neovim runs it at startup. A symlink to your own working copy is not
+held to that list, in Omarchy's words "theirs to fill however they like". Same
+theme, one staging rule apart:
+
+```sh
+git clone https://github.com/itsgg/omarchy-dark-knight-theme.git ~/src/dark-knight
+ln -sT ~/src/dark-knight ~/.config/omarchy/themes/dark-knight
+omarchy theme set "Dark Knight"
+```
+
+`ln -sT` rather than `ln -s`, and no `-f`: if the clone install has already
+left a `themes/dark-knight` directory there, a plain `ln -s` puts the link
+*inside* it and the outer clone keeps being the theme. The `-T` form refuses
+instead. Delete that directory first, it is a clone and holds nothing of
+yours, and run the link again.
+
+That install gets the indent guides below; the clone install gets Omarchy's
+generated spec instead, and everything else about the theme is identical.
+
+Two consequences of the link, both by design. `omarchy theme update` passes
+over it, because a working copy is not Omarchy's to pull, so it updates with
+`git -C ~/src/dark-knight pull` and a `theme set` after. And `omarchy theme
+install` of this repo replaces the link with a clone, which quietly drops back
+to the generated spec.
+
 ### Neovim and VS Code
 
 Both editors come from `colors.toml` through Omarchy's own templates, so they
@@ -77,11 +107,14 @@ freezes its section: Omarchy does not overwrite a file the theme ships, so a
 change to `neovim.lua.tpl` upstream arrives here only when `src/render.sh` is
 run again.
 
-The caveat is Omarchy's, and deliberate: it stages no `.lua` from a theme
-installed out of a git repo, because Neovim runs it at startup. Installed with
-`omarchy theme install`, this theme gets the template's spec and the loud
-guides; the file reaches Neovim where the theme is a local directory or a
-symlink to a checkout. The portable fix is upstream, in `neovim.lua.tpl`.
+Which install gets it is the staging rule above: a working copy does, a clone
+in `~/.config/omarchy/themes` does not, because Omarchy stages no `.lua` from
+one. Nothing in `colors.toml` can stand in for the file, either, since the
+whole problem is that one palette key is being spent on text and on decoration
+at once and only code can tell them apart. Fixing it for clone installs too
+would mean fixing it a level up, in aether or in `neovim.lua.tpl`, where it
+would reach every theme that takes Omarchy's generated spec rather than this
+one alone.
 
 ## About the emblem
 
