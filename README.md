@@ -79,42 +79,48 @@ over it, because a working copy is not Omarchy's to pull, so it updates with
 install` of this repo replaces the link with a clone, which quietly drops back
 to the generated spec.
 
-### Neovim and VS Code
+### Updating an install that is already there
 
-Both editors come from `colors.toml` through Omarchy's own templates, so they
-match the rest of the theme exactly rather than approximately. The theme used
-to ship `neovim.lua` and `vscode.json` pointing both at Kanagawa, chosen
-because it is "warm gold on near-black, the same relationship as `--gold-500`
-on `--ink-900`". That relationship no longer exists, and both files went.
+A pull changes the theme directory it pulls into, and nothing downstream of
+it. What Neovim, GTK and the bar read is the copy under
+`~/.local/state/omarchy/current/theme`, which only a theme set rebuilds, so an
+update is always a pull and then a restage. `omarchy theme refresh` is that
+restage: a theme set on whatever theme is current, with the wallpaper left
+alone. It restages this theme only if this theme is the one applied; from
+another theme, `omarchy theme set "Dark Knight"` instead.
 
-`neovim.lua` is back, as one override rather than another colorscheme.
-Omarchy's template hands aether the palette and stops there, and aether spends
-`muted` on text and on decoration alike: comments and line numbers, but also
-`NonText`, which is what snacks.nvim draws every indent guide with, and
-`IblIndent`, which is indent-blankline's. So the guides arrive at 3.95:1 on
-the ground, in the comment colour and at comment weight, on every indented
-line of the file. The scope guide arrives louder still, at full `cyan` (6.45:1
-under snacks) or `blue` (6.43:1 under indent-blankline): the weight of code,
-for a piece of chrome. Dimming `muted` cannot fix that, because it is also the
-comment colour and comments are text. So `src/neovim.py` reads Omarchy's
-template, resolves it from `colors.toml`, and inserts an `on_highlights` block
-that puts the guides on `line` (1.60:1, already this theme's structure colour
-and its inactive window border) and the scope guides on `accent_dim` (3.20:1).
-Comments, line numbers and every other use of `muted` are untouched.
+A clone install, which Omarchy will pull for you:
 
-Shipping the file freezes the rest of the spec the way `shell.controls.toml`
-freezes its section: Omarchy does not overwrite a file the theme ships, so a
-change to `neovim.lua.tpl` upstream arrives here only when `src/render.sh` is
-run again.
+```sh
+omarchy theme update     # pulls every cloned theme under ~/.config/omarchy/themes
+omarchy theme refresh
+```
 
-Which install gets it is the staging rule above: a working copy does, a clone
-in `~/.config/omarchy/themes` does not, because Omarchy stages no `.lua` from
-one. Nothing in `colors.toml` can stand in for the file, either, since the
-whole problem is that one palette key is being spent on text and on decoration
-at once and only code can tell them apart. Fixing it for clone installs too
-would mean fixing it a level up, in aether or in `neovim.lua.tpl`, where it
-would reach every theme that takes Omarchy's generated spec rather than this
-one alone.
+A working copy, which it deliberately will not:
+
+```sh
+git -C ~/src/dark-knight pull
+omarchy theme refresh
+```
+
+And moving an install that is already a clone onto a working copy, which is
+the move that gains `neovim.lua`. The clone first, so that nothing is removed
+until the thing replacing it is on disk: `git clone` refuses a destination
+that already holds anything, and fails there rather than after the removal.
+
+```sh
+git clone https://github.com/itsgg/omarchy-dark-knight-theme.git ~/src/dark-knight
+rm -rf ~/.config/omarchy/themes/dark-knight
+ln -sT ~/src/dark-knight ~/.config/omarchy/themes/dark-knight
+omarchy theme set "Dark Knight"
+```
+
+That `rm -rf` takes a git repository with it. It is a clone of this one, so
+its history is on GitHub, but edits, untracked files and unpushed commits in
+it are not: `git -C ~/.config/omarchy/themes/dark-knight status` before, if
+you have ever opened it. The desktop keeps its current look throughout either
+way, because the staged copy under `~/.local/state` is not touched until the
+set. Restart Neovim afterwards, since it reads its spec at startup.
 
 ## About the emblem
 
