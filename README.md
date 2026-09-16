@@ -81,32 +81,102 @@ to the generated spec.
 
 ### Updating an install that is already there
 
-A pull changes the theme directory it pulls into, and nothing downstream of
-it. What Neovim, GTK and the bar read is the copy under
-`~/.local/state/omarchy/current/theme`, which only a theme set rebuilds, so an
-update is always a pull and then a restage. `omarchy theme refresh` is that
-restage: a theme set on whatever theme is current, with the wallpaper left
-alone. It restages this theme only if this theme is the one applied; from
-another theme, `omarchy theme set "Dark Knight"` instead.
-
-A clone install, which Omarchy will pull for you:
+Installed the ordinary way, with `omarchy theme install`, so a clone:
 
 ```sh
-omarchy theme update     # pulls every cloned theme under ~/.config/omarchy/themes
+omarchy theme update
 omarchy theme refresh
 ```
 
-A working copy, which it deliberately will not:
+Two commands rather than one chained with `&&`: `omarchy theme update` returns
+the exit status of the last clone it pulled, so an unrelated theme failing to
+pull would skip the refresh this theme needs, and an early failure is hidden
+by a later success.
+
+Both halves are needed. `omarchy theme update` pulls every cloned theme under
+`~/.config/omarchy/themes` and restages nothing, and a pull changes only that
+directory: what Neovim, GTK and the bar read is the copy under
+`~/.local/state/omarchy/current/theme`, which a theme set rebuilds.
+`omarchy theme refresh` is that set, on whatever theme is current, with the
+wallpaper left alone. From another theme, `omarchy theme set "Dark Knight"`
+instead, which is the same rebuild plus the switch.
+
+Installed as a working copy, which Omarchy deliberately will not pull:
 
 ```sh
-git -C ~/src/dark-knight pull
-omarchy theme refresh
+git -C ~/src/dark-knight pull && omarchy theme refresh
 ```
 
-And moving an install that is already a clone onto a working copy, which is
-the move that gains `neovim.lua`. The clone first, so that nothing is removed
-until the thing replacing it is on disk: `git clone` refuses a destination
-that already holds anything, and fails there rather than after the removal.
+A working copy restages the whole theme that way, `neovim.lua` included. A
+clone install gets everything except that file, which Omarchy will not hand it
+at all. There are two ways to have it anyway, and the first leaves the install
+you already have alone.
+
+#### Keeping the clone install, and dimming the guides from Neovim
+
+Omarchy's generated spec is an ordinary lazy.nvim spec, so a spec of your own
+merges into it. This one adds the `on_highlights` that `neovim.lua` would have
+carried, and derives both colours from the palette in front of it rather than
+naming this theme's, so it stays right under any Omarchy theme built on
+aether:
+
+```lua
+-- ~/.config/nvim/lua/plugins/zz-indent-guides.lua
+return {
+  {
+    "bjarneo/aether.nvim",
+    name = "aether",
+    optional = true,
+    opts = {
+      on_highlights = function(hl, c)
+        local function blend(from, to, amount)
+          local out = "#"
+          for i = 2, 6, 2 do
+            local a = tonumber(from:sub(i, i + 1), 16)
+            local b = tonumber(to:sub(i, i + 1), 16)
+            out = out .. string.format("%02X", math.floor(a + (b - a) * amount + 0.5))
+          end
+          return out
+        end
+
+        local guide = blend(c.bg, c.fg, 0.14)
+        local scope = blend(c.bg, c.accent or c.blue, 0.6)
+
+        for _, group in ipairs({ "NonText", "Whitespace", "SnacksIndent", "IblIndent" }) do
+          hl[group] = { fg = guide, nocombine = true }
+        end
+        for _, group in ipairs({ "SnacksIndentScope", "SnacksIndentChunk", "IblScope", "MiniIndentscopeSymbol" }) do
+          hl[group] = { fg = scope, nocombine = true }
+        end
+      end,
+    },
+  },
+}
+```
+
+The `zz-` in the filename is load-bearing. lazy.nvim imports
+`lua/plugins/*.lua` in alphabetical order and a later spec's `opts` wins, so
+`indent-guides.lua` would be overridden by the `theme.lua` Omarchy symlinks in
+while `zz-indent-guides.lua` is not. On a clone install nothing else sets
+these groups and either name works; on a working copy, only the `zz-` name
+stays in charge of them. Two `on_highlights` callbacks do not merge, the later
+one replaces the earlier.
+
+`optional = true` means the spec adds nothing on a setup that never mentions
+aether; it does not test which theme is applied, and on this one Omarchy's own
+`all-themes.lua` names aether anyway. What decides whether the callback does
+anything is whether aether is the colorscheme in use, which is most Omarchy
+themes. That is also why the colours are derived rather than named: under this
+theme they land on #252B2E and #336581, against the #283943 and #236A8C the
+theme ships, the same two places on the ramp measured rather than written
+down; under another aether theme they are that theme's.
+
+#### Or moving the clone onto a working copy
+
+The other way is to become the kind of install Omarchy will hand `.lua` to.
+The clone first, so that nothing is removed until the thing replacing it is on
+disk: `git clone` refuses a destination that already holds anything, and fails
+there rather than after the removal.
 
 ```sh
 git clone https://github.com/itsgg/omarchy-dark-knight-theme.git ~/src/dark-knight
@@ -121,6 +191,45 @@ it are not: `git -C ~/.config/omarchy/themes/dark-knight status` before, if
 you have ever opened it. The desktop keeps its current look throughout either
 way, because the staged copy under `~/.local/state` is not touched until the
 set. Restart Neovim afterwards, since it reads its spec at startup.
+
+### Neovim and VS Code
+
+Both editors come from `colors.toml` through Omarchy's own templates, so they
+match the rest of the theme exactly rather than approximately. The theme used
+to ship `neovim.lua` and `vscode.json` pointing both at Kanagawa, chosen
+because it is "warm gold on near-black, the same relationship as `--gold-500`
+on `--ink-900`". That relationship no longer exists, and both files went.
+
+`neovim.lua` is back, as one override rather than another colorscheme.
+Omarchy's template hands aether the palette and stops there, and aether spends
+`muted` on text and on decoration alike: comments and line numbers, but also
+`NonText`, which is what snacks.nvim draws every indent guide with, and
+`IblIndent`, which is indent-blankline's. So the guides arrive at 3.95:1 on
+the ground, in the comment colour and at comment weight, on every indented
+line of the file. The scope guide arrives louder still, at full `cyan` (6.45:1
+under snacks) or `blue` (6.43:1 under indent-blankline): the weight of code,
+for a piece of chrome. Dimming `muted` cannot fix that, because it is also the
+comment colour and comments are text. So `src/neovim.py` reads Omarchy's
+template, resolves it from `colors.toml`, and inserts an `on_highlights` block
+that puts the guides on `line` (1.60:1, already this theme's structure colour
+and its inactive window border) and the scope guides on `accent_dim` (3.20:1).
+Comments, line numbers and every other use of `muted` are untouched.
+
+Shipping the file freezes the rest of the spec the way `shell.controls.toml`
+freezes its section: Omarchy does not overwrite a file the theme ships, so a
+change to `neovim.lua.tpl` upstream arrives here only when `src/render.sh` is
+run again.
+
+Which install gets the file is the staging rule above: a working copy does, a
+clone in `~/.config/omarchy/themes` does not, because Omarchy stages no `.lua`
+from one. Nothing in `colors.toml` can stand in for it either, since the whole
+problem is one palette key spent on text and on decoration at once and only
+code can tell those apart. A clone install is not stuck, though: the same
+override in your own Neovim config does the same work, and is under
+[Updating](#updating-an-install-that-is-already-there). Fixing it for everyone
+at once would mean fixing it a level up, in aether or in `neovim.lua.tpl`,
+where it would reach every theme that takes Omarchy's generated spec rather
+than this one alone.
 
 ## About the emblem
 
