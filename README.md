@@ -28,7 +28,7 @@ reproducible rather than picked by eye:
 
 ```sh
 python3 src/palette.py backgrounds/<wallpaper>.jpg > colors.toml
-src/render.sh   # gtk.css, shell.controls.toml, the wallpapers and the preview
+src/render.sh   # gtk.css, shell.controls.toml, neovim.lua, wallpapers, preview
 ```
 
 `render.sh` regenerates everything else derived from `colors.toml`, so a
@@ -51,12 +51,37 @@ omarchy theme set "Dark Knight"
 
 ### Neovim and VS Code
 
-This theme no longer ships `neovim.lua` or `vscode.json`. They pointed both
-editors at Kanagawa, chosen because it is "warm gold on near-black, the same
-relationship as `--gold-500` on `--ink-900`". That relationship no longer
-exists: the palette is one cold hue carried by lightness. Omarchy generates
-both editors from `colors.toml` through its own templates, so they now match
-the rest of the theme exactly rather than approximately.
+Both editors come from `colors.toml` through Omarchy's own templates, so they
+match the rest of the theme exactly rather than approximately. The theme used
+to ship `neovim.lua` and `vscode.json` pointing both at Kanagawa, chosen
+because it is "warm gold on near-black, the same relationship as `--gold-500`
+on `--ink-900`". That relationship no longer exists, and both files went.
+
+`neovim.lua` is back, as one override rather than another colorscheme.
+Omarchy's template hands aether the palette and stops there, and aether spends
+`muted` on text and on decoration alike: comments and line numbers, but also
+`NonText`, which is what snacks.nvim draws every indent guide with, and
+`IblIndent`, which is indent-blankline's. So the guides arrive at 3.95:1 on
+the ground, in the comment colour and at comment weight, on every indented
+line of the file. The scope guide arrives louder still, at full `cyan` (6.45:1
+under snacks) or `blue` (6.43:1 under indent-blankline): the weight of code,
+for a piece of chrome. Dimming `muted` cannot fix that, because it is also the
+comment colour and comments are text. So `src/neovim.py` reads Omarchy's
+template, resolves it from `colors.toml`, and inserts an `on_highlights` block
+that puts the guides on `line` (1.60:1, already this theme's structure colour
+and its inactive window border) and the scope guides on `accent_dim` (3.20:1).
+Comments, line numbers and every other use of `muted` are untouched.
+
+Shipping the file freezes the rest of the spec the way `shell.controls.toml`
+freezes its section: Omarchy does not overwrite a file the theme ships, so a
+change to `neovim.lua.tpl` upstream arrives here only when `src/render.sh` is
+run again.
+
+The caveat is Omarchy's, and deliberate: it stages no `.lua` from a theme
+installed out of a git repo, because Neovim runs it at startup. Installed with
+`omarchy theme install`, this theme gets the template's spec and the loud
+guides; the file reaches Neovim where the theme is a local directory or a
+symlink to a checkout. The portable fix is upstream, in `neovim.lua.tpl`.
 
 ## About the emblem
 

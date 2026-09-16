@@ -21,6 +21,19 @@ echo "gtk.css"
 echo "gtk3.css"
 echo "shell.controls.toml"
 
+# neovim.lua is the one generator that also reads Omarchy's own template, so it
+# is the one that can fail on a machine without Omarchy installed. Written to a
+# scratch file and moved, so that failure leaves the shipped file alone rather
+# than truncating it to nothing under `set -e`. mktemp rather than a fixed
+# /tmp name: a fixed one is another render's output, or a symlink pointing at
+# something that is not ours to truncate.
+scratch=$(mktemp)
+trap 'rm -f "$scratch"' EXIT
+python3 neovim.py >"$scratch"
+mv "$scratch" ../neovim.lua
+chmod 644 ../neovim.lua
+echo "neovim.lua"
+
 python3 flat.py >/dev/null
 
 for f in [0-9]-*.svg; do
