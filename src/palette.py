@@ -414,11 +414,7 @@ def emit(p, ansi, hue, slope, intercept, warm, peak, path):
     def block(title, keys):
         w(f"# {title}\n")
         for k in keys:
-            v = p[k]
-            if v.startswith("#") and k not in ("hyprland_active_border", "hyprland_inactive_border"):
-                w(f'{k:24} = "{v}"  # contrast {contrast(v, bg):5.2f}:1 on the base\n')
-            else:
-                w(f'{k:24} = "{v}"\n')
+            w(f'{k:24} = "{p[k]}"\n')
         w("\n")
 
     block("Ground, from the image's shadows down.",

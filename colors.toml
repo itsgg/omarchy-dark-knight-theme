@@ -30,48 +30,48 @@
 mode = "dark"
 
 # Ground, from the image's shadows down.
-background               = "#0A1014"  # contrast  1.00:1 on the base
-dark_background          = "#070B0D"  # contrast  1.03:1 on the base
-darker_background        = "#040708"  # contrast  1.06:1 on the base
-lighter_background       = "#162128"  # contrast  1.17:1 on the base
+background               = "#0A1014"
+dark_background          = "#070B0D"
+darker_background        = "#040708"
+lighter_background       = "#162128"
 
 # Structure and text, up the same ramp. Body text needs 4.5:1, UI 3:1.
-line                     = "#283943"  # contrast  1.60:1 on the base
-muted                    = "#5D7583"  # contrast  3.95:1 on the base
-dark_foreground          = "#7F919C"  # contrast  5.86:1 on the base
-light_foreground         = "#A1AAB0"  # contrast  8.11:1 on the base
-foreground               = "#CCCFD1"  # contrast 12.23:1 on the base
-bright_foreground        = "#ECEDEE"  # contrast 16.33:1 on the base
-cursor                   = "#CCCFD1"  # contrast 12.23:1 on the base
+line                     = "#283943"
+muted                    = "#5D7583"
+dark_foreground          = "#7F919C"
+light_foreground         = "#A1AAB0"
+foreground               = "#CCCFD1"
+bright_foreground        = "#ECEDEE"
+cursor                   = "#CCCFD1"
 
 # The accent, and what it paints.
-accent                   = "#4F9EC9"  # contrast  6.44:1 on the base
-accent_dim               = "#236A8C"  # contrast  3.20:1 on the base
-selection                = "#0C2B3A"  # contrast  1.30:1 on the base
-selection_background     = "#0C2B3A"  # contrast  1.30:1 on the base
-selection_foreground     = "#ECEDEE"  # contrast 16.33:1 on the base
+accent                   = "#4F9EC9"
+accent_dim               = "#236A8C"
+selection                = "#0C2B3A"
+selection_background     = "#0C2B3A"
+selection_foreground     = "#ECEDEE"
 
 # Window borders.
 hyprland_active_border   = "rgba(4F9EC9ee) rgba(236A8Cee) 45deg"
 hyprland_inactive_border = "rgba(283943cc)"
 
 # Semantic and ANSI. Gold is the warning.
-red                      = "#BF878C"  # contrast  6.43:1 on the base
-yellow                   = "#A1966D"  # contrast  6.47:1 on the base
-orange                   = "#B88D75"  # contrast  6.48:1 on the base
-green                    = "#7B9F7E"  # contrast  6.47:1 on the base
-cyan                     = "#5BA1A3"  # contrast  6.45:1 on the base
-blue                     = "#8E93BC"  # contrast  6.43:1 on the base
-magenta                  = "#B389A7"  # contrast  6.43:1 on the base
-brown                    = "#755845"  # contrast  2.95:1 on the base
+red                      = "#BF878C"
+yellow                   = "#A1966D"
+orange                   = "#B88D75"
+green                    = "#7B9F7E"
+cyan                     = "#5BA1A3"
+blue                     = "#8E93BC"
+magenta                  = "#B389A7"
+brown                    = "#755845"
 
 # Bright variants.
-bright_red               = "#E9AEB3"  # contrast 10.18:1 on the base
-bright_yellow            = "#C9BC92"  # contrast 10.11:1 on the base
-bright_green             = "#A1C6A4"  # contrast 10.14:1 on the base
-bright_cyan              = "#82C9CA"  # contrast 10.17:1 on the base
-bright_blue              = "#B4B9E4"  # contrast 10.03:1 on the base
-bright_magenta           = "#DAAFCE"  # contrast 10.03:1 on the base
+bright_red               = "#E9AEB3"
+bright_yellow            = "#C9BC92"
+bright_green             = "#A1C6A4"
+bright_cyan              = "#82C9CA"
+bright_blue              = "#B4B9E4"
+bright_magenta           = "#DAAFCE"
 
 # The 16 slots, for anything reading them directly.
 color0  = "#0A1014"
