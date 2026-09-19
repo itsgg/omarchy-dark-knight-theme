@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Re-render everything Dark Knight derives from colors.toml: the GTK and shell
-# files, btop.theme, neovim.lua, the wallpapers and the
+# files, btop.theme, neovim.lua, the wallpaper and the
 # Plymouth mark. preview.png is not here: it is a screenshot, taken by
 # preview.sh.
 set -euo pipefail

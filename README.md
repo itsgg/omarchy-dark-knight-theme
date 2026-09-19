@@ -10,13 +10,9 @@ is flat, and the theme adds no glow or blur.
 
 ## Previews
 
-| Grid | Origin |
+| Wallpaper | Boot and disk-unlock screen |
 |---|---|
-| ![Grid wallpaper](backgrounds/1-grid.png) | ![Origin wallpaper](backgrounds/2-origin.png) |
-
-The boot and disk-unlock screen uses the same picture as the Origin wallpaper:
-
-![Plymouth boot screen](preview-unlock.png)
+| ![Wallpaper](backgrounds/1-origin.png) | ![Plymouth boot screen](preview-unlock.png) |
 
 ## Install
 
@@ -65,7 +61,7 @@ shell, Chromium, VS Code, Obsidian), plus:
 
 | File | |
 |---|---|
-| `backgrounds/` | two flat vector wallpapers |
+| `backgrounds/` | one flat vector wallpaper |
 | `shell.*.toml` | bar, launcher, menu, lock card, control states |
 | `neovim.lua` | quiet indent guides, syntax colour kept for data |
 | `gtk.css`, `gtk3.css` | libadwaita and the GTK3 file chooser |

@@ -1,24 +1,18 @@
-"""The Dark Knight wallpapers: two, flat, and quiet.
+"""The Dark Knight wallpaper: one, flat, and quiet.
 
-One vocabulary, twice. The first is a steel hairline grid, two accent axes
-crossing on thirds, and the emblem at the origin at a size where it is a mark
-on the grid rather than the subject. The second is that origin centred, with
-the grid running out into the ground: the boot screen at full size.
+The emblem centred where two accent axes cross, on a steel hairline grid that
+runs out into the ground through a mask. It is the boot screen at full size:
+unlock.py cuts the same origin out for Plymouth, so the machine boots into the
+picture the desktop then wears.
+
 No blur filters, no raster blocks and no gradient fills: every edge is a real
-vector edge on a flat ground. The one soft thing is the second wallpaper's
-grid, whose lines fade out through a mask; a fade on a hairline cannot band.
+vector edge on a flat ground. The one soft thing is the grid, whose lines fade
+out through a mask; a fade on a hairline cannot band. A wallpaper competes
+with the windows for the same attention and loses if it tries to be the
+subject, so this is built to sit behind a terminal all day.
 
-There were four. A skyline with a searchlight, the emblem large, and a field
-of rings came and went on 2026-09-19, and before them two photographs. The grid
-is what was kept, because it is the one that is the theme: a ground, a
-line, one hue, and nothing asking to be looked at while there is work in front
-of it. A wallpaper competes with the windows for the same attention and loses
-if it tries to be the subject.
-
-Quiet is not invisible. The first render put its hairlines at 0.16 to 0.32 and
-at full size on a real panel the grid was not there at all, so every mark is
-about half again stronger than that, which on a ground at 6% lightness is
-still far below a window's text.
+Quiet is not invisible. The hairlines are strong enough to be seen on a real
+panel, which on a ground at 6% lightness is still far below a window's text.
 """
 import sys, pathlib, tomllib
 sys.path.insert(0, '.')
@@ -99,30 +93,10 @@ def emblem(cx, cy, scale, stroke_op, width=3.2, fill_op=0.0):
                   f'stroke-width="{width}" stroke-opacity="{stroke_op}" '
                   f'stroke-linejoin="round"/>')
 
-# ------------------------------------------------------------------ 1: grid
-# The origin sits on thirds, not dead centre. The emblem replaces the origin
-# dot at a size where it still reads as a mark on the grid, not as the subject.
-OX, OY = 1500, 1500
-defs = grid("fine", 60, OX, OY, 1, 0.12) + grid("coarse", 300, OX, OY, 1.5, 0.23)
-body = f'''
-<rect width="{W}" height="{H}" fill="url(#fine)"/>
-<rect width="{W}" height="{H}" fill="url(#coarse)"/>
-<rect x="0" y="{OY - 1}" width="{W}" height="2" fill="{ACCENT}" opacity="0.42"/>
-<rect x="{OX - 1}" y="0" width="2" height="{H}" fill="{ACCENT}" opacity="0.42"/>
-{emblem(OX, OY, 0.50, 0.80, 2.8, fill_op=0.08)}'''
-write("1-grid.svg", svg(body, defs))
-
-
-# --------------------------------------------------------------- 2: origin
-# The boot screen, as a wallpaper. unlock.py cuts the grid's origin out for
-# Plymouth: the emblem centred where the axes cross, the grid running out into
-# the ground through a mask. It was made to be a logo and turned out to be the
-# better picture of the two, so here it is at full size, and with it the
-# desktop is the same image the machine booted into.
-#
-# The mask is the one gradient in the set and it is on the lines, not on a
-# fill. The origin is the centre of the frame, and grid() puts a coarse line
-# through it exactly.
+# ------------------------------------------------------------------ origin
+# The mask is the one gradient here and it is on the lines, not on a fill. The
+# origin is the centre of the frame, and grid() puts a coarse line through it
+# exactly.
 CX, CY = W // 2, H // 2
 defs = grid("fine", 60, CX, CY, 1, 0.12) + grid("coarse", 300, CX, CY, 1.5, 0.23) + f'''
 <radialGradient id="fade" gradientUnits="userSpaceOnUse" cx="{CX}" cy="{CY}" r="1850">
@@ -139,5 +113,5 @@ body = f'''
 <rect x="{CX - 1}" y="0" width="2" height="{H}" fill="{ACCENT}" opacity="0.42"/>
 </g>
 {emblem(CX, CY, 0.62, 0.85, 3.0, fill_op=0.08)}'''
-write("2-origin.svg", svg(body, defs))
-print("1-grid 2-origin")
+write("1-origin.svg", svg(body, defs))
+print("1-origin")
