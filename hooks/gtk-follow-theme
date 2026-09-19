@@ -1,0 +1,34 @@
+#!/bin/bash
+# theme-set hook: make GTK wear whatever theme Omarchy just staged.
+#
+#   omarchy hook install theme-set hooks/gtk-follow-theme
+#
+# Omarchy copies a theme's gtk.css nowhere GTK looks, so the files are inert
+# until ~/.config/gtk-4.0/gtk.css and ~/.config/gtk-3.0/gtk.css point at the
+# staged copies. The links point at current/theme rather than at this theme,
+# so they follow every later switch on their own; this hook only has to make
+# them once, and then do the one thing a link cannot: xdg-desktop-portal-gtk
+# reads its stylesheet at start, so the file chooser keeps the previous
+# theme's colours until it is restarted.
+#
+# A real gtk.css that is already there is somebody's own work and is left
+# alone, with a line saying so.
+set -u
+
+staged="$HOME/.local/state/omarchy/current/theme"
+
+link() {
+  local source="$1" dest="$2"
+  [[ -f $source ]] || return 0
+  if [[ -e $dest && ! -L $dest ]]; then
+    echo "gtk-follow-theme: $dest is a real file, left alone" >&2
+    return 0
+  fi
+  mkdir -p "$(dirname "$dest")"
+  ln -sfn "$source" "$dest"
+}
+
+link "$staged/gtk.css" "$HOME/.config/gtk-4.0/gtk.css"
+link "$staged/gtk3.css" "$HOME/.config/gtk-3.0/gtk.css"
+
+systemctl --user try-restart xdg-desktop-portal-gtk.service 2>/dev/null || true

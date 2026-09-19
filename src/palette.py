@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-"""Derive colors.toml from the wallpaper this theme is worn with.
+"""Derive colors.toml from a photograph's measurements.
 
-    python3 src/palette.py backgrounds/<wallpaper>.jpg > colors.toml
+    python3 src/palette.py > colors.toml                 # the recorded image
+    python3 src/palette.py <wallpaper>.jpg > colors.toml # measure another
+
+The photograph this theme was measured from is no longer in the repository:
+it was a film still, not ours to ship, and the wallpapers are all generated
+now. What the theme needs from it is six numbers, and they are recorded below
+as MEASURED, so the palette is still derived rather than picked and still
+reproducible without the file. Given an image, the script measures that one
+instead.
 
 The first palette for this theme was ported from the itsgg.com design system,
 where the accent is gold and the greys are near-neutral. Worn over the Batman
@@ -16,14 +24,15 @@ it. This matches it. Every structural colour is that hue, hierarchy is carried
 by lightness alone, and saturation falls as lightness rises exactly as it does
 in the photograph. Nothing is imported.
 
-Gold survives, at the share it actually has in the picture. It is no longer the
-accent; it is the warning colour, which is the one job where a hue foreign to
-everything around it is the point rather than the problem.
-
-The accent is not a different hue either. It is the same hue with the
-saturation turned up, which is the one axis the image leaves unused: the
-photograph never exceeds 32% saturation, so 52% at a high lightness reads as
-unmistakably deliberate while still being the same colour as everything else.
+The accent is not a different hue either, and it is not a louder one. It was,
+twice: gold, then the image's hue at 2.4 times the image's peak chroma. Both
+read as a second theme laid over the first, and on 2026-09-17 the accent was
+taken down to steel by hand, in colors.toml, which this script then silently
+disagreed with. The decision lives here now. Steel, at the image's own chroma,
+is what fills. The accent is marked by lightness first; it does carry more
+chroma than anything in the image (19 against a peak of 13 for the recorded
+photograph), because at steel's chroma it could not be told from the text
+greys, but only as much as that takes and never more than the ANSI set.
 """
 
 import colorsys
@@ -32,11 +41,19 @@ import re
 import subprocess
 import sys
 
-USAGE = "usage: palette.py <wallpaper> > colors.toml"
+USAGE = "usage: palette.py [wallpaper] > colors.toml"
+
+# backgrounds/0-batman-dark-knight-portrait.jpg, as measured by measure() on
+# 2026-09-19, the day before it left the repository (it is in the history up
+# to then): HLS hue, the slope and intercept of saturation against lightness,
+# the share of warm pixels, the hue in Lab, and the peak chroma.
+MEASURED = (203.05949533310115, -0.38402388257615666, 33.751225228248856,
+            0.0007495069033530572, 248.78767155775904, 13.147585087665682)
+SOURCE = "a recorded photograph (see MEASURED in src/palette.py)"
 
 
 def sample(path, buckets=16):
-    """The image as (share, hue, saturation, lightness), largest share first."""
+    """The image as (share, hex, hue, saturation, lightness), largest share first."""
     try:
         out = subprocess.run(
         # -depth 8, or a Q16 build prints #RRRRGGGGBBBB and taking the first
@@ -121,7 +138,8 @@ def hexof(h, s, l):
 
 
 def ramp(hue, slope, intercept, lightness):
-    """One step of the structural ramp: the image's own saturation at that lightness."""
+    """One step of the structural ramp: the image's own saturation at that
+    lightness, and never under 6%, below which the hue stops reading at all."""
     return hexof(hue, max(6.0, slope * lightness + intercept), lightness)
 
 
@@ -226,11 +244,17 @@ def raise_until(make, start, ok, limit=99.0):
     an elevated surface, below the 3:1 that any UI element needs, in a key
     Omarchy's templates use 160 times.
     """
+    return raise_until_at(make, start, ok, limit)[0]
+
+
+def raise_until_at(make, start, ok, limit=99.0):
+    """raise_until, and the lightness it stopped at, for a caller that has to
+    come back and carry on from there."""
     l = start
     while l <= limit:
         c = make(l)
         if ok(c):
-            return c
+            return c, l
         l += 0.5
     # Returning make(limit) here would hand back a colour known to fail its
     # own floor and leave the audit to catch it, which is the shape of bug
@@ -246,20 +270,46 @@ def raise_until(make, start, ok, limit=99.0):
 # Both of these were fixed numbers once, which meant a vivid wallpaper would
 # have got the same quiet accent as a near-monochrome one. They are multiples
 # of the image's own peak chroma now, so the theme is as colourful as the
-# picture warrants: the accent clearly past anything in the image, the ANSI set
-# under the accent so nothing ever outshouts the thing that means "here".
-ACCENT_OVER_IMAGE = 2.4
+# picture warrants. Steel is the image's chroma, not past it, and it is what
+# fills: the selection, the dim accent. The ANSI set is the most colourful
+# thing in the theme, because a terminal's red has to be told from its green.
+#
+# The accent is carried by light, like everything else here. At steel's
+# chroma and L66 it sat CIE76 7 from light_foreground and 7 from
+# dark_foreground, so focus, the selected row and a link were three greys
+# among the text greys and nothing on the screen said "here". It is lifted to
+# L76 and given only as much chroma as it takes to stand off the text ramp
+# (ACCENT_APART, found rather than written down), never more than the ANSI
+# set.
+#
+# The window border is the same colour, lower: L62. It was tried further up
+# the road first, near-white at L92 after Omarchy's lumon, and on a ground at
+# 6% lightness that was 14:1, above the body text's 12:1, so the frame
+# outranked what it framed and haloed on a dark screen. lumon's ground is
+# three times lighter, which is why it works there. A border has to be found,
+# not read: 3:1 on the ground, unmistakable beside the inactive one, and
+# darker than light_foreground, so it never outranks body text. It is not
+# under every text step: dark_foreground, the dimmest, sits a shade below it.
+STEEL_OVER_IMAGE = 0.83
 ANSI_OVER_IMAGE = 1.75
+ACCENT_LIGHT = 76.0
+ACCENT_APART = 16.0
+BORDER_LIGHT = 62.0
 ANSI_LIGHT = 62.0
 
 
-def build(path):
+def measure(path):
+    """The six numbers the palette is built from, off an image."""
     rows = sample(path)
     hue, slope, intercept = axis(rows)
     warm = sum(w for w, _, h, s, _ in rows if (h < 70 or h > 320) and s > 8)
-    accent_hue = lab_hue(rows)
-    peak_chroma = max(chroma_of(hx) for _, hx, _, _, _ in rows)
-    accent_chroma = peak_chroma * ACCENT_OVER_IMAGE
+    return (hue, slope, intercept, warm, lab_hue(rows),
+            max(chroma_of(hx) for _, hx, _, _, _ in rows))
+
+
+def build(measured):
+    hue, slope, intercept, warm, accent_hue, peak_chroma = measured
+    steel_chroma = peak_chroma * STEEL_OVER_IMAGE
     ansi_chroma = peak_chroma * ANSI_OVER_IMAGE
 
     # Ground: below the image's own dominant, so a window sits on the picture
@@ -284,38 +334,98 @@ def build(path):
         lambda l: ramp(hue, slope, intercept, l), 40.0,
         lambda c: contrast(c, p["lighter_background"]) >= 3.0)
 
-    # The accent: the same hue, on the axis the image never uses. The
-    # photograph peaks at 32% saturation, so this is recognisably deliberate
-    # and cannot read as foreign.
-    p["accent"] = lch(ANSI_LIGHT, accent_chroma, accent_hue)
-    # Exported rather than a local, so the preview's card border and the window
-    # border are the same two colours by construction. It was a local once, the
-    # preview repeated its value as a literal, and the two drifted apart the
-    # first time the accent moved.
-    p["accent_dim"] = lch(42, accent_chroma * 0.85, accent_hue)
-    p["selection"] = lch(16, accent_chroma * 0.45, accent_hue)
+    # Steel: the same hue, at the image's own colourfulness. The fills.
+    # accent_dim is exported rather than a local, so the preview's card border
+    # and the scope guides are the same colour by construction. It was a local
+    # once, the preview repeated its value as a literal, and the two drifted
+    # apart the first time the accent moved.
+    p["accent_dim"] = lch(45, steel_chroma, accent_hue)
+    p["selection"] = lch(18, steel_chroma * 0.67, accent_hue)
     p["selection_background"] = p["selection"]
-    # And against the selected row, which is lighter still once the accent
-    # fill is composited over it.
-    sel_fill = composite(p["accent"], p["background"], 0.16)
-    p["muted"] = raise_until(
-        lambda l: ramp(hue, slope, intercept, l), 40.0,
-        lambda c: contrast(c, p["lighter_background"]) >= 3.0
-        and contrast(c, p["selection"]) >= 3.0
-        and contrast(c, sel_fill) >= 3.0)
-    # dark_foreground is text, not chrome, so its floor is 4.5:1 and it is
-    # the same three surfaces. At the hand-picked L52 it read 4.49, 3.89 and
-    # 4.05, which is the kind of miss that only a check finds.
-    p["dark_foreground"] = raise_until(
-        lambda l: ramp(hue, slope, intercept, l), 52.0,
-        lambda c: contrast(c, p["lighter_background"]) >= 4.5
-        and contrast(c, p["selection"]) >= 4.5
-        and contrast(c, sel_fill) >= 4.5)
-    p["selection_foreground"] = p["bright_foreground"]
+    # The text ramp's floors and the accent need each other. muted and
+    # dark_foreground have to clear the selected row, which is the accent
+    # composited over the ground; the accent has to stand off the text ramp,
+    # which includes dark_foreground. So they are settled together: place the
+    # floors against the current accent, place the accent against those
+    # floors, and stop when the accent stops moving.
+    #
+    # The floors only ever go up. Each round starts from the lightness the
+    # last one reached rather than from the bottom, because resetting them let
+    # the two chase each other: a reviewer found an image where the accent
+    # swapped between #93C993 and #94C893 for ever, each nudging
+    # dark_foreground across the 4.5:1 line and back, while the second pairing
+    # was valid all along. Going up only, the ramp can move a bounded number of
+    # half-steps; once it holds still the accent, which depends on nothing
+    # else, is the one the floors were just measured against.
+    #
+    # This was one pass once, with the row estimated from the accent at its
+    # chroma ceiling on the theory that that was the lightest it could be. It
+    # is not: composite() mixes gamma-encoded channels, so more chroma at one
+    # Lab lightness can make the fill darker. Two reviewers found palettes
+    # where the floors passed the estimate and failed the real row at audit
+    # (4.5032 against 4.4799), and others where the estimate raised the text
+    # for nothing.
+    text = ("foreground", "light_foreground", "dark_foreground")
+    # From below. The first round has no accent yet and so no selected row to
+    # clear: the floors start at the lowest they could possibly be, and every
+    # later round measures them against a real accent's row and raises them
+    # only if that row demands it. Starting from a guessed accent instead (its
+    # chroma ceiling, in an earlier version) could leave them higher than the
+    # accent finally chosen needs, and going up only, they never came back.
+    p.pop("accent", None)
+    muted_from, dark_from = 40.0, 52.0
+    for _ in range(300):
+        sel_fill = (composite(p["accent"], p["background"], 0.16)
+                    if "accent" in p else p["background"])
+        # 4.5:1 on the base. muted is chrome on the raised surfaces, but on
+        # the base it is every comment and every line number in the editor,
+        # and those are read, not glanced at. At 3.95:1 a commented-out block
+        # was the hardest text on the screen.
+        p["muted"], muted_from = raise_until_at(
+            lambda l: ramp(hue, slope, intercept, l), muted_from,
+            lambda c: contrast(c, p["background"]) >= 4.5
+            and contrast(c, p["lighter_background"]) >= 3.0
+            and contrast(c, p["selection"]) >= 3.0
+            and contrast(c, sel_fill) >= 3.0)
+        # dark_foreground is text, not chrome, so its floor is 4.5:1 on the
+        # same three surfaces. At the hand-picked L52 it read 4.49, 3.89 and
+        # 4.05, which is the kind of miss that only a check finds.
+        p["dark_foreground"], dark_from = raise_until_at(
+            lambda l: ramp(hue, slope, intercept, l), dark_from,
+            lambda c: contrast(c, p["lighter_background"]) >= 4.5
+            and contrast(c, p["selection"]) >= 4.5
+            and contrast(c, sel_fill) >= 4.5)
 
-    # Borders. Active runs bright to dark along the accent so a 2px line reads
-    # as a bevel; inactive is the image's own mid tone.
-    p["hyprland_active_border"] = f'rgba({p["accent"][1:]}ee) rgba({p["accent_dim"][1:]}ee) 45deg'
+        # The accent: the least chroma that stands ACCENT_APART off every
+        # step of the text ramp it appears beside, and never past the ANSI
+        # set.
+        previous, chroma = p.get("accent"), steel_chroma
+        while True:
+            p["accent"] = lch(ACCENT_LIGHT, chroma, accent_hue)
+            if all(distance(p["accent"], p[k]) >= ACCENT_APART for k in text):
+                break
+            if chroma >= ansi_chroma:
+                raise SystemExit(
+                    f"palette: no accent at L{ACCENT_LIGHT:.0f} stands CIE76 "
+                    f"{ACCENT_APART:.0f} off the text ramp without passing the "
+                    "ANSI set's chroma. Move ACCENT_LIGHT rather than shipping "
+                    "an accent that reads as text.")
+            chroma = min(ansi_chroma, chroma + 0.25)
+        if p["accent"] == previous:
+            break
+    else:
+        raise SystemExit(
+            "palette: the text floors and the accent did not settle. They "
+            "only move one way, so this should be unreachable; it is a bug "
+            "in build(), not a property of the image.")
+    p["selection_foreground"] = p["bright_foreground"]
+    p["active_border"] = lch(BORDER_LIGHT, chroma, accent_hue)
+
+    # Borders. Active is solid, the accent's colour and darker than body
+    # text; inactive is the image's own mid tone. The active border was a 45
+    # degree gradient to accent_dim once, and on a 2px line the dark half read
+    # as a missing border.
+    p["hyprland_active_border"] = f'rgba({p["active_border"][1:]}ee)'
     p["hyprland_inactive_border"] = f'rgba({p["line"][1:]}cc)'
 
     # Semantic and ANSI.
@@ -327,12 +437,11 @@ def build(path):
     # and the hues are then placed at the widest mutual separation inside that
     # envelope.
     #
-    # The ceiling is the image's own peak saturation, lifted a little so these
-    # read as interface rather than as part of the photograph, and capped below
-    # the accent so nothing ever shouts louder than the thing that means
-    # "here". An earlier palette put gold at 68% against an accent at 52% and a
-    # family at 20 to 38%, and terminal yellow outshouted the focus colour on
-    # every screen that had both.
+    # The ceiling is the image's own peak chroma, lifted so these read as
+    # interface rather than as part of the photograph, and one ceiling for all
+    # of them. An earlier palette put gold at 68% saturation against a family
+    # at 20 to 38%, and terminal yellow outshouted everything on every screen
+    # that had it.
     # Hue anchors, far apart and still recognisable as the colour their slot
     # is named after. Nothing here is borrowed from a design system; the
     # numbers are only positions on the wheel, and they are placed at one
@@ -342,8 +451,14 @@ def build(path):
     # putting blue there too made the two CIE76 6.9 apart, separated only by
     # colourfulness, on screens that show both constantly. Cyan moves off blue
     # for the same reason.
+    #
+    # Blue was at 288 to get clear of the accent, and CIELAB bends blue toward
+    # purple as it goes round, so 288 came out violet: #8E93BC, 18 from
+    # magenta. The accent has since moved up to L76, which separates the two
+    # by lightness, so blue can come back to 272 and be blue. It stands 17
+    # from the accent, 27 from cyan and 24 from magenta there.
     ANCHORS = {"red": 15, "orange": 55, "yellow": 95, "green": 145,
-               "cyan": 200, "blue": 288, "magenta": 335, "brown": 60}
+               "cyan": 200, "blue": 272, "magenta": 335, "brown": 60}
     for slot, h in ANCHORS.items():
         if slot == "brown":
             p[slot] = lch(40.0, ansi_chroma * 0.8, h)
@@ -360,8 +475,12 @@ def build(path):
             lambda l, h=h: lch(l, ansi_chroma, h), ANSI_LIGHT + 2,
             lambda c, slot=slot: distance(c, p[slot]) >= 14.0)
 
+    # Slot 8 is muted, not line. Omarchy's terminal templates put muted there
+    # themselves, so this only reaches whatever reads colorN directly, but at
+    # line's 1.6:1 that reader drew its dim text invisible: slot 8 is what
+    # zsh-autosuggestions, fish hints and eza's dim columns are written in.
     ansi = ["background", "red", "green", "yellow", "blue", "magenta", "cyan",
-            "foreground", "line", "bright_red", "bright_green", "bright_yellow",
+            "foreground", "muted", "bright_red", "bright_green", "bright_yellow",
             "bright_blue", "bright_magenta", "bright_cyan", "bright_foreground"]
     return p, ansi, hue, slope, intercept, warm, peak_chroma
 
@@ -400,13 +519,14 @@ def emit(p, ansi, hue, slope, intercept, warm, peak, path):
     w("# which is how the photograph is built. Nothing is imported.\n#\n")
     w(f"#   peak chroma  {peak:.1f}, the most colourful thing in the image\n#\n")
     w("# The accent is the image's own hue, measured in Lab because that is where\n")
-    w(f"# it is placed, carried at chroma {peak * ACCENT_OVER_IMAGE:.0f}: past anything in the\n")
-    w("# photograph, so it reads as deliberate while staying the same colour as\n")
-    w("# everything around it.\n#\n")
+    w(f"# it is placed. Steel, the fills, sits at chroma {peak * STEEL_OVER_IMAGE:.0f} or under: inside the\n")
+    w("# photograph's own range. The accent is marked by lightness first, with\n")
+    w(f"# only the chroma ({chroma_of(p['accent']):.0f}) it takes to stand off the text ramp, and the\n")
+    w("# active window border is that colour again, darker than body text.\n#\n")
     w("# A monochrome photograph has no red and no green and a terminal needs\n")
     w("# them anyway, so the image sets the envelope rather than the hue. It\n")
-    w(f"# fixes how colourful anything may be (chroma {peak * ANSI_OVER_IMAGE:.0f} for the ANSI set,\n")
-    w("# under the accent) and how light; the hues are then positions on the\n")
+    w(f"# fixes how colourful anything may be (chroma {peak * ANSI_OVER_IMAGE:.0f} for the ANSI set)\n")
+    w("# while their lightness is fixed; the hues are then positions on the\n")
     w("# wheel, spaced far enough apart that the audit's distance floors pass.\n")
     w("# There is no gold and no imported accent.\n\n")
     w('mode = "dark"\n\n')
@@ -423,12 +543,12 @@ def emit(p, ansi, hue, slope, intercept, warm, peak, path):
           ["line", "muted", "dark_foreground", "light_foreground", "foreground",
            "bright_foreground", "cursor"])
     block("The accent, and what it paints.",
-          ["accent", "accent_dim", "selection", "selection_background",
-           "selection_foreground"])
+          ["accent", "accent_dim", "active_border", "selection",
+           "selection_background", "selection_foreground"])
     w("# Window borders.\n")
     w(f'hyprland_active_border   = "{p["hyprland_active_border"]}"\n')
     w(f'hyprland_inactive_border = "{p["hyprland_inactive_border"]}"\n\n')
-    block("Semantic and ANSI. Gold is the warning.",
+    block("Semantic and ANSI. Yellow is the warning.",
           ["red", "yellow", "orange", "green", "cyan", "blue", "magenta", "brown"])
     block("Bright variants.",
           ["bright_red", "bright_yellow", "bright_green", "bright_cyan",
@@ -438,7 +558,7 @@ def emit(p, ansi, hue, slope, intercept, warm, peak, path):
         w(f'color{i:<2} = "{p[k]}"\n')
 
 
-def audit(p):
+def audit(p, ceiling=None):
     """Every floor this file claims, checked against what it produced.
 
     On stderr and with a non-zero exit, so `palette.py ... > colors.toml`
@@ -453,7 +573,8 @@ def audit(p):
                "selection": p["selection"], "selected row": sel_fill}
     for name, g in grounds.items():
         for key, floor in (("foreground", 4.5), ("light_foreground", 4.5),
-                           ("dark_foreground", 4.5), ("muted", 3.0),
+                           ("dark_foreground", 4.5),
+                           ("muted", 4.5 if name == "base" else 3.0),
                            ("accent", 3.0)):
             c = contrast(p[key], g)
             if c < floor:
@@ -471,39 +592,60 @@ def audit(p):
                         # red and orange were CIE76 12.4 apart at 25 and 55.
                         ("red", "orange", 14.0), ("orange", "yellow", 14.0),
                         ("red", "green", 25.0),
-                        ("yellow", "accent", 25.0), ("accent", "foreground", 20.0)):
+                        ("yellow", "accent", 25.0),
+                        # The accent beside each step of the text ramp: at 7
+                        # it was a grey among greys.
+                        ("accent", "foreground", ACCENT_APART),
+                        ("accent", "light_foreground", ACCENT_APART),
+                        ("accent", "dark_foreground", ACCENT_APART)):
         d = distance(p[a], p[b])
         if d < floor:
             bad.append(f"{a} and {b} are CIE76 {d:.1f} apart, floor {floor}")
+    # The frame never outranks what it frames, is still a UI element on the
+    # ground, and cannot be mistaken for the inactive border.
+    if relative_luminance(p["active_border"]) >= relative_luminance(p["light_foreground"]):
+        bad.append("active_border is as light as the text it frames")
+    if contrast(p["active_border"], p["background"]) < 3.0:
+        bad.append("active_border is under 3:1 on the base")
+    if distance(p["active_border"], p["line"]) < 30.0:
+        bad.append("active_border is too close to the inactive border")
     if distance(p["line"], p["background"]) < 12.0:
         bad.append("line is invisible against the base")
-    # The accent is the loudest colour or it is not the accent. Terminal
-    # yellow was at 68% saturation against an accent at 52% and a family at
-    # 20 to 38%, so the warning colour outshouted the focus colour on every
-    # screen that had both.
-    ceiling = chroma_of(p["accent"])
-    sat = chroma_of
-    for slot in ("red", "green", "yellow", "blue", "magenta", "cyan", "orange",
-                 "bright_red", "bright_green", "bright_yellow", "bright_blue",
-                 "bright_magenta", "bright_cyan"):
-        if sat(p[slot]) > ceiling:
-            bad.append(f"{slot} carries more chroma than the accent "
-                       f"({sat(p[slot]):.0f} against {ceiling:.0f})")
+    # No slot louder than the ANSI envelope. This check used to be "nothing
+    # carries more chroma than the accent", from when the accent was the most
+    # colourful thing in the theme, and then "every slot within 3 of the
+    # quietest", which refused palettes build() had just made: a bright slot
+    # is lighter, the gamut is narrower up there, and lch() walks its chroma
+    # down by a different amount for every hue, so on a vivid image the
+    # spread is wide and nothing is wrong. What the check protects is that no
+    # hue outshouts the rest, and losing chroma to the gamut never does that.
+    # So it is a ceiling. Without one (a palette read back from a file) there
+    # is nothing to hold the slots to and the check is skipped, and says so.
+    slots = ("red", "green", "yellow", "blue", "magenta", "cyan", "orange",
+             "bright_red", "bright_green", "bright_yellow", "bright_blue",
+             "bright_magenta", "bright_cyan")
+    if ceiling is None:
+        print("palette: no ANSI ceiling given, loudness not checked", file=sys.stderr)
+    else:
+        for slot in slots:
+            if chroma_of(p[slot]) > ceiling + 1.5:
+                bad.append(f"{slot} carries chroma {chroma_of(p[slot]):.0f}, "
+                           f"over the ANSI ceiling of {ceiling:.0f}")
     for line in bad:
         print(f"palette: {line}", file=sys.stderr)
     return len(bad)
 
 
 if __name__ == "__main__":
-    # No default. The relative one here pointed outside the repository when
-    # run from the root, as the docstring told you to, and silently truncated
-    # colors.toml through the redirection before failing.
-    if len(sys.argv) != 2:
+    # No default path. A relative one here once pointed outside the
+    # repository and silently truncated colors.toml through the redirection
+    # before failing. With no argument there is no file involved at all.
+    if len(sys.argv) > 2:
         raise SystemExit(USAGE)
-    path = sys.argv[1]
-    built = build(path)
+    path = sys.argv[1] if len(sys.argv) == 2 else SOURCE
+    built = build(measure(path) if len(sys.argv) == 2 else MEASURED)
     emit(*built, path)
-    failures = audit(built[0])
+    failures = audit(built[0], built[6] * ANSI_OVER_IMAGE)
     if failures:
         print(f"palette: {failures} floor(s) not met", file=sys.stderr)
     sys.exit(1 if failures else 0)

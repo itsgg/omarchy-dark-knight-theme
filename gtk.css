@@ -8,24 +8,24 @@
 @define-color red             #BF878C;
 @define-color green           #7B9F7E;
 @define-color yellow          #A1966D;
-@define-color blue            #8E93BC;
+@define-color blue            #7F97BE;
 @define-color magenta         #B389A7;
 @define-color cyan            #5BA1A3;
 @define-color white           #CCCFD1;
 @define-color bright_red      #E9AEB3;
 @define-color bright_green    #A1C6A4;
 @define-color bright_yellow   #C9BC92;
-@define-color bright_blue     #B4B9E4;
+@define-color bright_blue     #A4BDE5;
 @define-color bright_magenta  #DAAFCE;
 @define-color bright_cyan     #82C9CA;
 @define-color bright_white    #ECEDEE;
-@define-color accent          #4F9EC9;
-@define-color accent_dim      #236A8C;
+@define-color accent          #99C1DC;
+@define-color accent_dim      #596D7B;
 @define-color surface         #162128;
 @define-color recessed        #070B0D;
 @define-color line            #283943;
-@define-color muted           #5D7583;
-@define-color dim             #7F919C;
+@define-color muted           #687F8D;
+@define-color dim             #86969F;
 
 /* libadwaita's semantic names, all of them, so no stock blue survives
    anywhere.
