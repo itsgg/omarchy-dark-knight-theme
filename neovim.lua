@@ -31,16 +31,16 @@ return {
 
         -- Syntax: grammar on the grey ramp, names as text, definitions
         -- brightest, and hue only for data. See src/neovim.py.
-        hl["Keyword"]                           = { fg = "#A1AAB0" } -- light_foreground
-        hl["Statement"]                         = { fg = "#A1AAB0" } -- light_foreground
-        hl["Conditional"]                       = { fg = "#A1AAB0" } -- light_foreground
-        hl["Repeat"]                            = { fg = "#A1AAB0" } -- light_foreground
-        hl["Exception"]                         = { fg = "#A1AAB0" } -- light_foreground
-        hl["Define"]                            = { fg = "#A1AAB0" } -- light_foreground
-        hl["Include"]                           = { fg = "#A1AAB0" } -- light_foreground
-        hl["PreProc"]                           = { fg = "#A1AAB0" } -- light_foreground
-        hl["@keyword"]                          = { fg = "#A1AAB0" } -- light_foreground
-        hl["@keyword.function"]                 = { fg = "#A1AAB0" } -- light_foreground
+        hl["Keyword"]                           = { fg = "#A9B0B5" } -- light_foreground
+        hl["Statement"]                         = { fg = "#A9B0B5" } -- light_foreground
+        hl["Conditional"]                       = { fg = "#A9B0B5" } -- light_foreground
+        hl["Repeat"]                            = { fg = "#A9B0B5" } -- light_foreground
+        hl["Exception"]                         = { fg = "#A9B0B5" } -- light_foreground
+        hl["Define"]                            = { fg = "#A9B0B5" } -- light_foreground
+        hl["Include"]                           = { fg = "#A9B0B5" } -- light_foreground
+        hl["PreProc"]                           = { fg = "#A9B0B5" } -- light_foreground
+        hl["@keyword"]                          = { fg = "#A9B0B5" } -- light_foreground
+        hl["@keyword.function"]                 = { fg = "#A9B0B5" } -- light_foreground
         hl["Identifier"]                        = { fg = "#CCCFD1" } -- foreground
         hl["Function"]                          = { fg = "#CCCFD1" } -- foreground
         hl["@function.call"]                    = { fg = "#CCCFD1" } -- foreground
@@ -49,7 +49,7 @@ return {
         hl["@lsp.type.property"]                = { fg = "#CCCFD1" } -- foreground
         hl["@variable.member"]                  = { fg = "#CCCFD1" } -- foreground
         hl["@variable.parameter"]               = { fg = "#CCCFD1" } -- foreground
-        hl["@string.documentation"]             = { fg = "#86969F" } -- dark_foreground
+        hl["@string.documentation"]             = { fg = "#8E9CA4" } -- dark_foreground
         hl["@function"]                         = { fg = "#ECEDEE", bold = true } -- bright_foreground
         hl["@function.method"]                  = { fg = "#ECEDEE", bold = true } -- bright_foreground
         hl["@lsp.typemod.function.declaration"] = { fg = "#ECEDEE", bold = true } -- bright_foreground
@@ -68,10 +68,10 @@ return {
         lighter_bg = "#162128",
 
         fg = "#CCCFD1",
-        dark_fg = "#86969F",
-        light_fg = "#A1AAB0",
+        dark_fg = "#8E9CA4",
+        light_fg = "#A9B0B5",
         bright_fg = "#ECEDEE",
-        muted = "#687F8D",
+        muted = "#758A96",
 
         red = "#BF878C",
         yellow = "#A1966D",

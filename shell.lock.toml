@@ -3,7 +3,7 @@
 background       = "#0A1014"
 background-alpha = 0.8
 text             = "#CCCFD1"
-placeholder      = "#687F8D"
+placeholder      = "#758A96"
 text-error       = "#BF878C"
 border           = "#596D7B"
 border-active    = "hyprland.active-border"

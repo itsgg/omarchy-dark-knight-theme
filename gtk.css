@@ -24,8 +24,8 @@
 @define-color surface         #162128;
 @define-color recessed        #070B0D;
 @define-color line            #283943;
-@define-color muted           #687F8D;
-@define-color dim             #86969F;
+@define-color muted           #758A96;
+@define-color dim             #8E9CA4;
 
 /* libadwaita's semantic names, all of them, so no stock blue survives
    anywhere.

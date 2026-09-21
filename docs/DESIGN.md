@@ -22,8 +22,9 @@ argument it uses them, given an image it measures that one instead.
 |---|---|---|
 | `background` | `#0A1014` | the image's hue at 6% lightness, with the image's own saturation for that lightness |
 | `line` | `#283943` | the same ramp at 21%: rules, indent guides, the inactive border |
-| `muted` | `#687F8D` | raised until it clears 4.5:1 on the base, because it is every comment and line number, and 3:1 on every raised surface |
-| `dark_foreground` | `#86969F` | raised until it clears 4.5:1 on all of them |
+| `muted` | `#758A96` | raised until it clears 4.5:1 on the base and on raised surfaces, because it is comments, line numbers and hints on both, and 3:1 on selected rows |
+| `dark_foreground` | `#8E9CA4` | raised until it clears 4.5:1 on all of them and stands CIE76 8 above `muted` |
+| `light_foreground` | `#A9B0B5` | the ramp at 66% or higher, CIE76 8 above `dark_foreground` |
 | `foreground` | `#CCCFD1` | the ramp above anything in the photograph, because text sits on top of it |
 | `accent` | `#99C1DC` | the image's Lab hue at L76, with the least chroma (19) that stands CIE76 16 off every step of the text ramp |
 | `active_border` | `#739BB5` | the accent's colour at L62: 6.5:1 on the ground, under the text |
@@ -93,7 +94,7 @@ first is the indent guides.
 Omarchy's template hands aether the palette and stops there, and aether spends
 `muted` on text and on decoration alike: comments and line numbers, but also
 `NonText`, which is what snacks.nvim draws every indent guide with, and
-`IblIndent`, which is indent-blankline's. So the guides arrive at 4.57:1 on
+`IblIndent`, which is indent-blankline's. So the guides arrive at 5.32:1 on
 the ground, in the comment colour and at comment weight, on every indented
 line of the file. The scope guide arrives louder still, at full `cyan` (6.45:1
 under snacks) or `blue` (6.45:1 under indent-blankline): the weight of code,

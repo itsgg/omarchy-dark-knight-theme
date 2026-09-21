@@ -41,7 +41,7 @@ overrides, are in [docs/INSTALL.md](docs/INSTALL.md).
 | `background` | `#0A1014` | ground |
 | `lighter_background` | `#162128` | raised surfaces |
 | `line` | `#283943` | rules, guides, inactive border |
-| `muted` | `#687F8D` | comments, line numbers |
+| `muted` | `#758A96` | comments, line numbers |
 | `foreground` | `#CCCFD1` | text |
 | `accent` | `#99C1DC` | focus, selection, links |
 | `active_border` | `#739BB5` | focused window |

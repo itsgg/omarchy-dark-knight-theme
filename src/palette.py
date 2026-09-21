@@ -294,8 +294,20 @@ STEEL_OVER_IMAGE = 0.83
 ANSI_OVER_IMAGE = 1.75
 ACCENT_LIGHT = 76.0
 ACCENT_APART = 16.0
+# The least CIE76 between neighbouring text steps (muted, dark_foreground,
+# light_foreground), so lifting the bottom of the ramp for legibility cannot
+# fold two steps into one grey.
+TEXT_STEP = 8.0
 BORDER_LIGHT = 62.0
 ANSI_LIGHT = 62.0
+
+
+def above(c, below):
+    """A text step: lighter than the step under it, and TEXT_STEP clear of it.
+    Distance alone is not direction, and a step that met it by landing
+    under its neighbour would swap two rungs of the ramp."""
+    return (relative_luminance(c) > relative_luminance(below)
+            and distance(c, below) >= TEXT_STEP)
 
 
 def measure(path):
@@ -320,7 +332,6 @@ def build(measured):
         "background":         ramp(hue, slope, intercept, 6.0),
         "lighter_background": ramp(hue, slope, intercept, 12.0),
         "line":               ramp(hue, slope, intercept, 21.0),
-        "light_foreground":   ramp(hue, slope, intercept, 66.0),
         # Above anything in the photograph, because text sits on top of it.
         "foreground":         ramp(hue, slope, intercept, 81.0),
         "bright_foreground":  ramp(hue, slope, intercept, 93.0),
@@ -373,18 +384,22 @@ def build(measured):
     # chroma ceiling, in an earlier version) could leave them higher than the
     # accent finally chosen needs, and going up only, they never came back.
     p.pop("accent", None)
-    muted_from, dark_from = 40.0, 52.0
+    muted_from, dark_from, light_from = 40.0, 52.0, 66.0
     for _ in range(300):
         sel_fill = (composite(p["accent"], p["background"], 0.16)
                     if "accent" in p else p["background"])
-        # 4.5:1 on the base. muted is chrome on the raised surfaces, but on
-        # the base it is every comment and every line number in the editor,
-        # and those are read, not glanced at. At 3.95:1 a commented-out block
-        # was the hardest text on the screen.
+        # 4.5:1 on the base and on the raised surfaces. On the base muted is
+        # every comment and every line number in the editor, and at 3.95:1 a
+        # commented-out block was the hardest text on the screen. It was held
+        # to 3:1 on the raised surfaces as chrome, but Omarchy's templates
+        # draw it as text there too, and at 3.91:1 on a laptop panel a user
+        # reported it hard to read (2026-09-21). Selected rows keep 3:1: the
+        # row fill already marks the line, and 4.5 there makes muted the same
+        # grey as dark_foreground.
         p["muted"], muted_from = raise_until_at(
             lambda l: ramp(hue, slope, intercept, l), muted_from,
             lambda c: contrast(c, p["background"]) >= 4.5
-            and contrast(c, p["lighter_background"]) >= 3.0
+            and contrast(c, p["lighter_background"]) >= 4.5
             and contrast(c, p["selection"]) >= 3.0
             and contrast(c, sel_fill) >= 3.0)
         # dark_foreground is text, not chrome, so its floor is 4.5:1 on the
@@ -394,7 +409,12 @@ def build(measured):
             lambda l: ramp(hue, slope, intercept, l), dark_from,
             lambda c: contrast(c, p["lighter_background"]) >= 4.5
             and contrast(c, p["selection"]) >= 4.5
-            and contrast(c, sel_fill) >= 4.5)
+            and contrast(c, sel_fill) >= 4.5
+            and above(c, p["muted"]))
+        # And a step above that, for the same reason.
+        p["light_foreground"], light_from = raise_until_at(
+            lambda l: ramp(hue, slope, intercept, l), light_from,
+            lambda c: above(c, p["dark_foreground"]))
 
         # The accent: the least chroma that stands ACCENT_APART off every
         # step of the text ramp it appears beside, and never past the ANSI
@@ -574,7 +594,7 @@ def audit(p, ceiling=None):
     for name, g in grounds.items():
         for key, floor in (("foreground", 4.5), ("light_foreground", 4.5),
                            ("dark_foreground", 4.5),
-                           ("muted", 4.5 if name == "base" else 3.0),
+                           ("muted", 4.5 if name in ("base", "elevated") else 3.0),
                            ("accent", 3.0)):
             c = contrast(p[key], g)
             if c < floor:
@@ -597,10 +617,18 @@ def audit(p, ceiling=None):
                         # it was a grey among greys.
                         ("accent", "foreground", ACCENT_APART),
                         ("accent", "light_foreground", ACCENT_APART),
-                        ("accent", "dark_foreground", ACCENT_APART)):
+                        ("accent", "dark_foreground", ACCENT_APART),
+                        ("muted", "dark_foreground", TEXT_STEP),
+                        ("dark_foreground", "light_foreground", TEXT_STEP),
+                        ("light_foreground", "foreground", TEXT_STEP)):
         d = distance(p[a], p[b])
         if d < floor:
             bad.append(f"{a} and {b} are CIE76 {d:.1f} apart, floor {floor}")
+    # The text ramp climbs in order, so no step can pass the one above it.
+    ramp_keys = ("muted", "dark_foreground", "light_foreground", "foreground")
+    for lo, hi in zip(ramp_keys, ramp_keys[1:]):
+        if relative_luminance(p[lo]) >= relative_luminance(p[hi]):
+            bad.append(f"{lo} is as light as {hi}")
     # The frame never outranks what it frames, is still a UI element on the
     # ground, and cannot be mistaken for the inactive border.
     if relative_luminance(p["active_border"]) >= relative_luminance(p["light_foreground"]):
