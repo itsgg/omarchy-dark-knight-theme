@@ -16,8 +16,14 @@ script that checks contrast, so comments and dim text stay readable.
 ## Install
 
 ```sh
-omarchy theme install https://github.com/itsgg/omarchy-dark-knight-theme.git
+git clone https://github.com/itsgg/omarchy-dark-knight-theme.git ~/.local/share/dark-knight-theme
+bash ~/.local/share/dark-knight-theme/install.sh
 ```
+
+The installer applies the full theme, including Neovim syntax colours and
+indent guides. It links this working copy into Omarchy and preserves any
+previous install in `~/.local/state/dark-knight/backups/`. Keep the checkout
+in place. Running the installer again is safe.
 
 Switch back to it later with `omarchy theme set "Dark Knight"`.
 
@@ -31,8 +37,8 @@ omarchy hook install theme-set ~/.config/omarchy/themes/dark-knight/hooks/gtk-fo
 omarchy plymouth set by theme dark-knight
 ```
 
-Updating, and the working-copy install that also gets the Neovim syntax
-overrides, are in [docs/INSTALL.md](docs/INSTALL.md).
+Updates, the standard Omarchy install, and removal are in
+[docs/INSTALL.md](docs/INSTALL.md).
 
 ## Palette
 
@@ -73,6 +79,7 @@ shell, Chromium, VS Code, Obsidian), plus:
 python3 src/palette.py > colors.toml   # fails if a contrast floor is missed
 src/render.sh                          # regenerates everything from colors.toml
 src/preview.sh                         # retakes preview.png
+python3 -m unittest discover -s tests -v # installer checks; requires bubblewrap
 ```
 
 Design notes: [docs/DESIGN.md](docs/DESIGN.md).
