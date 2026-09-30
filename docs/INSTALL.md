@@ -105,3 +105,17 @@ password because it rebuilds the initramfs:
 ```sh
 omarchy plymouth set by theme dark-knight
 ```
+
+## Obsidian
+
+Omarchy syncs the theme stylesheet into Obsidian vaults recorded in
+`~/.config/obsidian/obsidian.json`. If you open Obsidian for the first time,
+clone a vault, or create a new vault after applying this theme, sync it with:
+
+```sh
+omarchy theme refresh
+```
+
+This writes `theme.css` into each vault's `.obsidian/themes/Omarchy/`
+directory so Obsidian picks up the theme without switching themes away and back.
+
