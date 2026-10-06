@@ -183,6 +183,13 @@ def on_highlights(palette):
     for group, key, why in OVERRIDES:
         lines.append(f'        hl.{group:<{width}} = {{ fg = "{palette[key]}", '
                      f"nocombine = true }} -- {why}\n")
+    # aether's cursor line is twenty percent of the foreground, which on this
+    # palette is louder than the selection. A highlight group cannot be
+    # translucent, so the line takes the raised surface: present, and still
+    # under a selection. The line number stays the marker.
+    lines.append(f'        hl.{"CursorLine":<{width}} = '
+                 f'{{ bg = "{palette["lighter_background"]}" }} '
+                 "-- raised surface, under the selection\n")
     lines += [
         "\n",
         "        -- Syntax: grammar on the grey ramp, names as text, definitions\n",

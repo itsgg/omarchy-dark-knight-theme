@@ -28,6 +28,7 @@ return {
         hl.SnacksIndentChunk     = { fg = "#596D7B", nocombine = true } -- same guide, chunk style
         hl.IblScope              = { fg = "#596D7B", nocombine = true } -- indent-blankline's scope guide, which is blue
         hl.MiniIndentscopeSymbol = { fg = "#596D7B", nocombine = true } -- mini.indentscope, if that is the one
+        hl.CursorLine            = { bg = "#162128" } -- raised surface, under the selection
 
         -- Syntax: grammar on the grey ramp, names as text, definitions
         -- brightest, and hue only for data. See src/neovim.py.
