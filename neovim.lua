@@ -28,7 +28,19 @@ return {
         hl.SnacksIndentChunk     = { fg = "#596D7B", nocombine = true } -- same guide, chunk style
         hl.IblScope              = { fg = "#596D7B", nocombine = true } -- indent-blankline's scope guide, which is blue
         hl.MiniIndentscopeSymbol = { fg = "#596D7B", nocombine = true } -- mini.indentscope, if that is the one
-        hl.CursorLine            = { bg = "#162128" } -- raised surface, under the selection
+
+        -- A current row takes the raised surface: the cursor line, the
+        -- picker, a menu and a visual selection. A search hit is left alone.
+        hl.CursorLine                    = { bg = "#162128" }
+        hl.Visual                        = { bg = "#162128" }
+        hl.VisualNOS                     = { bg = "#162128" }
+        hl.SnacksPickerListCursorLine    = { bg = "#162128" }
+        hl.SnacksPickerPreviewCursorLine = { bg = "#162128" }
+        hl.PmenuSel                      = { bg = "#162128" }
+        hl.PmenuMatchSel                 = { bg = "#162128", fg = "#7F97BE" }
+        hl.BlinkCmpMenuSelection         = { bg = "#162128" }
+        hl.QuickFixLine                  = { bg = "#162128", bold = true }
+        hl.WildMenu                      = { bg = "#162128" }
 
         -- Syntax: grammar on the grey ramp, names as text, definitions
         -- brightest, and hue only for data. See src/neovim.py.
