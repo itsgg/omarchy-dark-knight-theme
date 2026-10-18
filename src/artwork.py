@@ -13,6 +13,7 @@ import tempfile
 import tomllib
 
 from bat import path
+from plymouth import build as build_plymouth
 
 ROOT = Path(__file__).resolve().parent.parent
 P = tomllib.loads((ROOT / 'colors.toml').read_text())
@@ -99,8 +100,11 @@ def main():
                 source.replace(OUT/f'{name}-{"wallpaper" if is_wallpaper else "splash"}.svg')
                 print(target.relative_to(ROOT))
             if shutil.which('omarchy-plymouth-preview'):
+                preview_root = work/name
+                build_plymouth(preview_root/'default/plymouth', name)
                 subprocess.run(['omarchy-plymouth-preview', BG, P['foreground'], str(ROOT/logo),
-                                str(work/'preview.png')], check=True, env=env)
+                                str(work/'preview.png')], check=True,
+                               env={**env, 'OMARCHY_PATH': str(preview_root)})
                 subprocess.run(['magick', str(work/'preview.png'), '-depth', '8', '-strip',
                                 '-define', 'png:exclude-chunks=date,time', str(work/'final.png')], check=True)
                 (work/'final.png').replace(ROOT/preview)

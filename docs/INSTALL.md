@@ -114,17 +114,32 @@ picked up too. A real `gtk.css` that is already there is left alone.
 ## Plymouth
 
 `unlock.png` is the mark for the boot and disk-unlock screen. Omarchy does not
-apply it on a theme switch; that is its own command, and it asks for your
-password because it rebuilds the initramfs:
+apply it on a theme switch; that is its own command, and it shows a password
+dialog because it rebuilds the initramfs:
 
 ```sh
-omarchy plymouth set by theme dark-knight
+bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh gotham
 ```
 
 Gotham is the default splash. To use the Cape splash:
 
 ```sh
-omarchy plymouth set '#0A1014' '#CCCFD1' ~/.config/omarchy/themes/dark-knight/unlock-cape.png
+bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh cape
+```
+
+The installer creates a separate `dark-knight` Plymouth theme. It preserves
+Omarchy's password callbacks and field position and hides the external lock
+icon with a transparent asset. Omarchy's shared theme files are left intact.
+A backup is printed after installation; a failed rebuild restores the
+previous theme and attempts to rebuild it again. This affects the boot and
+disk-unlock screen, not the desktop lock screen or SDDM login screen.
+Rebuilding uses `limine-mkinitcpio` when installed, matching Omarchy's
+Limine setup; other systems use `mkinitcpio -P`.
+
+To restore Omarchy's shared layout, including its external lock icon:
+
+```sh
+omarchy plymouth set by theme dark-knight
 ```
 
 Wallpaper selection is independent. Commands for both wallpapers and splash

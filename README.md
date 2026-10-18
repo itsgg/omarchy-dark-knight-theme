@@ -47,7 +47,7 @@ Optional:
 omarchy hook install theme-set ~/.config/omarchy/themes/dark-knight/hooks/gtk-follow-theme
 
 # Boot and disk-unlock screen (asks for your password, rebuilds the initramfs)
-omarchy plymouth set by theme dark-knight
+bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh gotham
 ```
 
 Updates, the standard Omarchy install, and removal are in
@@ -77,21 +77,23 @@ omarchy theme bg set ~/.local/state/omarchy/current/theme/backgrounds/2-cape.png
 Use `omarchy theme bg next` to cycle between them. Applying the current theme
 again can advance the wallpaper; `omarchy theme refresh` preserves your selection.
 
-The boot splash is selected separately. These commands ask for your password
+The boot splash is selected separately. These commands show a password dialog
 and rebuild the initramfs. For the Gotham splash:
 
 ```sh
-omarchy plymouth set by theme dark-knight
+bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh gotham
 ```
 
 For the Cape splash:
 
 ```sh
-omarchy plymouth set '#0A1014' '#CCCFD1' ~/.config/omarchy/themes/dark-knight/unlock-cape.png
+bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh cape
 ```
 
-The two colours are the artwork's ground and the theme's foreground. Changing the
-desktop wallpaper does not change the boot splash.
+The installer uses the theme's background and foreground colours and creates
+a separate Plymouth theme without the external lock icon. Changing the desktop
+wallpaper does not change the boot splash. These commands leave the desktop
+lock screen and SDDM login screen alone.
 
 ## Palette
 

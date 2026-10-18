@@ -240,3 +240,9 @@ this repository, and the carousel compares like with like.
 `unlock.png` is Gotham; `unlock-cape.png` is Cape. Each uses the same vector
 motif and colours as its wallpaper, on a transparent ground. Plymouth paints
 the palette background behind them. The README documents each pair.
+
+`src/plymouth.py` builds a separate Plymouth theme from Omarchy's packaged
+script and assets. It keeps the dialogue script intact apart from background
+colours. The lock asset is fully transparent, so the visible field is centred
+under the emblem. Both previews use these same assets. `src/install-splash.sh`
+installs this theme with a polkit password dialog and rebuilds the initramfs.
