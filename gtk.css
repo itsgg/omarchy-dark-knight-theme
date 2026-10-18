@@ -166,6 +166,125 @@ filechooserbutton:drop(active) {
     border-color: transparent;
 }
 
+/* Pure GTK4 widgets (applications like pavucontrol not using libadwaita). */
+window.background,
+window {
+    background-color: @background;
+    color: @foreground;
+}
+
+headerbar,
+.titlebar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-color: @line;
+}
+
+notebook,
+notebook > stack {
+    background-color: @background;
+}
+
+notebook > header {
+    background-color: @surface;
+    border-color: @line;
+}
+
+notebook > header > tabs > tab {
+    color: @muted;
+    background-color: transparent;
+    border-color: transparent;
+    padding: 4px 12px;
+}
+
+notebook > header > tabs > tab:checked {
+    color: @bright_white;
+    background-color: @background;
+    border-bottom: 2px solid @accent;
+}
+
+notebook > header > tabs > tab:hover:not(:checked) {
+    color: @foreground;
+    background-color: @surface;
+}
+
+scale trough {
+    background-color: @recessed;
+    border: 1px solid @line;
+}
+
+scale highlight {
+    background-color: @accent;
+}
+
+scale slider {
+    background-color: @bright_white;
+    border: 1px solid @line;
+}
+
+scale slider:hover {
+    background-color: @accent;
+}
+
+progressbar trough {
+    background-color: @recessed;
+    border: 1px solid @line;
+}
+
+progressbar progress {
+    background-color: @accent;
+}
+
+button:not(.flat) {
+    background-color: @surface;
+    color: @foreground;
+    border: 1px solid @line;
+}
+
+button:not(.flat):hover {
+    background-color: @surface;
+    border-color: @accent;
+    color: @bright_white;
+}
+
+button:not(.flat):checked,
+button:not(.flat):active {
+    background-color: @accent_dim;
+    color: @bright_white;
+}
+
+dropdown > button,
+combobox > box > button.combo {
+    background-color: @surface;
+    color: @foreground;
+    border: 1px solid @line;
+}
+
+checkbutton check {
+    background-color: @surface;
+    border: 1px solid @line;
+    color: @foreground;
+}
+
+checkbutton check:checked {
+    background-color: @accent;
+    color: @background;
+}
+
+entry {
+    background-color: @recessed;
+    color: @foreground;
+    border: 1px solid @line;
+}
+
+entry:focus {
+    border-color: @accent;
+}
+
+frame > border {
+    border-color: @line;
+}
+
 /* Square, everywhere, to match the desktop. libadwaita rounds nearly every
    widget from its own stylesheet and Hyprland's rounding cannot reach inside a
    window, so a square desktop with rounded GTK dialogs, buttons and popovers
