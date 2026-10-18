@@ -53,40 +53,9 @@ emit gtk3.css python3 gtk.py --gtk3
 for section in controls bar launcher menu lock; do
   emit "shell.$section.toml" python3 controls.py "$section"
 done
+
 emit btop.theme python3 btop.py
 emit neovim.lua python3 neovim.py
 
-python3 flat.py >/dev/null
-
-# The Plymouth mark. Transparent, so no noise pass and no JPEG.
-python3 unlock.py >"$work/unlock.svg"
-rsvg-convert "$work/unlock.svg" -o "$work/unlock.png"
-place "$work/unlock.png" unlock.png
-# And what it looks like at boot, which is the card the Plymouth switcher
-# shows. Omarchy draws it, so this is the other step that needs Omarchy here.
-if command -v omarchy-plymouth-preview >/dev/null; then
-  colour() { python3 -c 'import sys,tomllib; print(tomllib.load(open("../colors.toml","rb"))[sys.argv[1]])' "$1"; }
-  # omarchy-plymouth-preview ends in `imv -f <output>`: it opens the result
-  # full screen and blocks until that window is closed, which from a script
-  # is a render that hangs with a viewer over somebody's work. A no-op imv
-  # ahead of the real one on PATH, for this one call.
-  mkdir -p "$work/bin"
-  printf '#!/bin/sh\nexit 0\n' >"$work/bin/imv"
-  chmod +x "$work/bin/imv"
-  PATH="$work/bin:$PATH" \
-  omarchy-plymouth-preview "$(colour background)" "$(colour foreground)" \
-    "$(realpath ../unlock.png)" "$work/preview-unlock.png" >/dev/null
-  place "$work/preview-unlock.png" preview-unlock.png
-else
-  echo "preview-unlock.png skipped: no omarchy-plymouth-preview" >&2
-fi
-
-# Lossless, and no noise pass. These were JPEGs dithered with Gaussian noise
-# while they had a vignette to keep from banding; with a flat ground there is
-# no gradient to band, and PNG keeps a one pixel hairline one pixel wide,
-# which JPEG does not.
-for f in [0-9]-*.svg; do
-  rsvg-convert -w 3840 -h 2400 "$f" -o "$work/render.png"
-  magick "$work/render.png" -depth 8 -strip -define png:compression-level=9 "$work/wallpaper.png"
-  place "$work/wallpaper.png" "backgrounds/${f%.svg}.png"
-done
+# Shared compositions for both wallpapers and matching Plymouth marks.
+python3 artwork.py

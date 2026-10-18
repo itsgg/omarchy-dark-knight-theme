@@ -51,6 +51,21 @@ and leaves the wallpaper alone. If another theme is selected, use
 `omarchy theme set "Dark Knight"` after the pull instead. Updates to the
 checkout's `neovim.lua` reach Neovim on each refresh or theme switch.
 
+## Wallpaper variations
+
+Apply Dark Knight first, then choose Gotham or Cape using the staged paths:
+
+```sh
+omarchy theme bg set ~/.local/state/omarchy/current/theme/backgrounds/1-gotham.png
+omarchy theme bg set ~/.local/state/omarchy/current/theme/backgrounds/2-cape.png
+```
+
+Run the command for the variation you want. Use `omarchy theme bg next` to
+cycle. After updating from an earlier version, select one of these files:
+the old `1-origin.png` wallpaper has been replaced. A theme refresh preserves
+the previous wallpaper link, so it cannot repair a link to that removed file.
+Wallpaper changes leave the boot splash alone; its commands are below.
+
 ## Standard Omarchy installation
 
 ```sh
@@ -105,6 +120,15 @@ password because it rebuilds the initramfs:
 ```sh
 omarchy plymouth set by theme dark-knight
 ```
+
+Gotham is the default splash. To use the Cape splash:
+
+```sh
+omarchy plymouth set '#0A1014' '#CCCFD1' ~/.config/omarchy/themes/dark-knight/unlock-cape.png
+```
+
+Wallpaper selection is independent. Commands for both wallpapers and splash
+previews are in [Choose a variation](../README.md#choose-a-variation).
 
 ## Obsidian
 

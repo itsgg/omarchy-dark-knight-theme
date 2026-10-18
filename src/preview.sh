@@ -101,7 +101,8 @@ sleep 0.4
 launch foot -D "$repo" nvim src/palette.py \
   -c "lua vim.defer_fn(function() vim.cmd('normal! 232Gzt') end, 1200)"
 nvim=$last
-launch foot -D "$repo" btop
+# Fit btop's minimum 24 rows in a quarter of a scaled laptop display.
+launch foot -f 'JetBrainsMono Nerd Font:size=9' -D "$repo" btop
 btop=$last
 focus "$nvim"
 launch foot -D "$repo" bash -c 'eza -la --icons --group-directories-first; exec bash --norc -i'
