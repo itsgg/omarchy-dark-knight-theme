@@ -1,43 +1,28 @@
-# Flat wallpaper design, 2026-10-18
+# Flat vector visual set, 2026-10-19
 
-Two distinct flat vector wallpapers and matching splash screens for the
-Dark Knight theme. Keep the original bat geometry and Foot's #0A1014 ground.
-Use solid shapes and a limited blue-grey palette. No gradients, textures,
-3D effects, grids, dials or text.
+The artwork uses flat vectors in the theme's blue-grey palette. Source files
+contain vector paths, rectangles, circles and solid fills. No raster images,
+gradients, textures or bitmap layers are embedded.
 
-## Research
+Gotham uses three architectural layers with Gothic spires, stepped Art Deco
+crowns, cornices and rooftop water tanks. A Bat-Signal sits above the city.
+Occupied windows are sparse horizontal strips, never dense pinhole grids.
+Cape uses only a solid bat emblem centred on the plain theme background.
+The centred composition is shared by desktop, phone and tablet exports.
 
-- [GNOME background guidance](https://developer.gnome.org/hig/reference/backgrounds.html):
-  keep important elements safe from cropping and UI overlays, check different
-  aspect ratios, and inspect the result when blurred for the lock screen.
-- [GNOME production notes](https://github.com/GNOME/gnome-backgrounds/blob/main/README.md):
-  inspect actual pixels for sharpness and banding. Solid vector fills avoid
-  the low-contrast gradient issue in this design.
+Desktop PNGs are 5120x3200. Editable SVGs are resolution-independent. All
+phone and tablet variants use the same source scenes, with quiet upper
+regions for lock-screen UI.
+
+Boot and disk unlock use a steel-blue bat emblem. SDDM uses the same emblem
+in the subdued wallpaper colour. The lock icon
+is hidden, and password text and dots are centred. Boot dot positions update
+as password length grows or shrinks. SDDM is checked in test mode; the desktop
+lock is checked with Omarchy's blurred-wallpaper preview mode.
+
+## Background guidance
+
+- [GNOME backgrounds](https://developer.gnome.org/hig/reference/backgrounds.html):
+  check cropping, overlays and the blurred lock-screen treatment.
 - [KDE wallpaper guidance](https://community.kde.org/Design/Wallpapers/Wallpaper_design_guidelines):
-  use broad shapes, quiet upper regions, a limited palette and visible dark
-  tones. Wallpaper must keep working when partially covered by windows.
-  Its no-logo rule is for Plasma submissions; this personal theme explicitly
-  uses the Batman emblem as its identity.
-
-## Compositions
-
-Gotham uses a flat city skyline, a subdued solid signal disc and a negative
-bat silhouette. A flat beam connects the disc to the city. The upper left
-stays open; the skyline is anchored to the lower frame. Its splash distils
-the same design to the signal disc and bat.
-
-Cape uses a single solid bat silhouette with generous space around it.
-The lower frame carries broad angular cape-inspired planes. Its splash
-keeps the same emblem geometry and solid fill.
-
-The illustration is authored in src/artwork.py, using the existing vector
-in src/bat.py. Editable SVG exports are saved alongside the exported PNGs. The
-wallpapers are 3840x2400, with transparent 1320x480 splash canvases. No
-image generation or Blender is required to regenerate these final designs.
-
-## Validation
-
-Check 16:10 and 16:9 crops, blurred backdrops and partial window coverage.
-Inspect both splash motifs in Omarchy's real password-prompt layout. Verify
-exactly two wallpapers in the staged switcher. Keep rejected iterations in
-local state backups, outside the theme. Do not rebuild initramfs for previews.
+  preserve useful quiet space when application windows cover the image.

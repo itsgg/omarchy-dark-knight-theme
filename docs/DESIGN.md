@@ -198,25 +198,36 @@ every row that is the loudest thing in a window.
 
 ## Background
 
-`src/artwork.py` draws two flat vector compositions from the existing bat
-path. It writes editable SVG exports to `assets/artwork/` and exports lossless
-3840x2400 PNG wallpapers. All colours are solid. There are no gradients,
-textures, lighting effects or 3D geometry.
+`src/artwork.py` and `src/scenes.py` compose two entirely vector wallpapers.
+There are no embedded raster assets. Desktop exports are 5120x3200 PNGs;
+SVGs remain resolution-independent.
 
-Gotham places a Bat-Signal above a skyline made from two layers of simple
-building silhouettes. A flat triangular beam connects the signal to the
-city. The upper left remains open. The matching splash uses the same solid
-signal disc and negative bat silhouette.
+Gotham places a Bat-Signal over three layers of Gothic and Art Deco buildings.
+Stepped crowns, spires, cornices and water tanks provide architectural detail.
+Windows are occasional broad strips, avoiding a dense pinhole pattern.
+Cape uses a single solid bat emblem centred horizontally and vertically on
+the plain theme background. It has no skyline, figure or decorative planes.
 
-Cape uses a single solid bat silhouette with generous space around it.
-Two equally coloured angular planes connect the emblem to the lower frame.
-The matching splash uses the same solid bat fill.
+Phone and tablet variants use the same vector scene functions. Their upper
+regions stay open for lock-screen clocks. The renderer regenerates all eight
+mobile exports, their contact sheet and the download ZIP.
 
-Both use the theme and Foot ground, #0A1014, with restrained blue-grey shapes.
-The final design brief and research sources are in WALLPAPER-BRIEF.md.
-`src/render.sh` regenerates the SVGs, PNGs and splash previews. Gotham sorts
-first. Splash assets are transparent 1320x480 PNGs, leaving the real Plymouth
-password field below the artwork.
+Both boot variations use one simple steel-blue bat emblem on #0A1014.
+The hidden lock icon keeps its original transparent canvas. Password dots
+are repositioned on every keystroke to stay centred as the password grows
+or shrinks. All other vendor dialogue and authentication callbacks remain
+in place. Boot previews use the same assets and dot geometry.
+
+The dedicated SDDM theme uses the wallpaper emblem colour (`line`) and centres
+its placeholder and masked dots. Its lock
+icon is hidden, and its compact emblem canvas avoids excess transparent
+spacing. `src/login.py` builds the theme and `src/install-login.sh` installs
+it under /usr/local/share/sddm/themes with a theme-only override. Autologin
+and session selection are separate from this visual change.
+
+The desktop lock uses Omarchy's existing blurred current-wallpaper backdrop
+and the theme's lock card colours. Its real preview mode was used for both
+wallpaper variants without locking the session.
 
 ### The emblem
 
@@ -237,12 +248,12 @@ this repository, and the carousel compares like with like.
 
 ### Plymouth
 
-`unlock.png` is Gotham; `unlock-cape.png` is Cape. Each uses the same vector
-motif and colours as its wallpaper, on a transparent ground. Plymouth paints
-the palette background behind them. The README documents each pair.
+`unlock.png` is Gotham; `unlock-cape.png` is Cape. Both use the same simple
+steel-blue bat emblem on a transparent ground. Plymouth paints the palette
+background behind them. The README documents each pair.
 
 `src/plymouth.py` builds a separate Plymouth theme from Omarchy's packaged
-script and assets. It keeps the dialogue script intact apart from background
-colours. The lock asset is fully transparent, so the visible field is centred
-under the emblem. Both previews use these same assets. `src/install-splash.sh`
+script and assets. It changes background colours and masked-dot positions
+while preserving the vendor authentication and display callbacks. The lock
+asset is fully transparent, so the visible field is centred under the emblem. Both previews use these same assets. `src/install-splash.sh`
 installs this theme with a polkit password dialog and rebuilds the initramfs.

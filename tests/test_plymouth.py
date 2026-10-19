@@ -7,15 +7,34 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
-from plymouth import build
+from plymouth import build, preview, ORIGINAL_BULLET_LAYOUT, CENTERED_BULLET_LAYOUT
 
 
 @unittest.skipUnless(shutil.which('magick') and Path('/usr/share/omarchy/default/plymouth').is_dir(),
                      'requires ImageMagick and installed Omarchy assets')
 class PlymouthTest(unittest.TestCase):
+    def test_failed_preview_render_preserves_previous_image(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            target = Path(scratch)/'preview.png'
+            target.write_bytes(b'previous preview')
+
+            def assets(destination, variation):
+                for name in ('logo.png', 'entry.png', 'bullet.png'):
+                    (destination/name).write_bytes(b'asset')
+
+            def failed_render(args, **kwargs):
+                Path(args[-1]).write_bytes(b'partial render')
+                raise subprocess.CalledProcessError(1, args)
+
+            with patch('plymouth.build', side_effect=assets), patch('plymouth.subprocess.run', side_effect=failed_render):
+                with self.assertRaises(subprocess.CalledProcessError):
+                    preview(target, 'gotham')
+            self.assertEqual(target.read_bytes(), b'previous preview')
+
     def test_build_keeps_dialogue_and_hides_only_icon(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as scratch:
             stage = Path(scratch)/'theme'
@@ -28,8 +47,10 @@ class PlymouthTest(unittest.TestCase):
             self.assertEqual(dimensions(stage/'lock.png'), dimensions(vendor_lock))
             original = Path(os.environ.get('OMARCHY_PATH', '/usr/share/omarchy'))/'default/plymouth/omarchy.script'
             def dialogue(text):
+                text = text.replace(CENTERED_BULLET_LAYOUT, ORIGINAL_BULLET_LAYOUT)
                 return '\n'.join(line for line in text.splitlines() if not line.startswith('Window.SetBackground'))
             self.assertEqual(dialogue(original.read_text()), dialogue((stage/'omarchy.script').read_text()))
+            self.assertEqual((stage/'omarchy.script').read_text().count(CENTERED_BULLET_LAYOUT), 1)
             self.assertEqual((stage/'logo.png').read_bytes(), (ROOT/'unlock.png').read_bytes())
             self.assertIn('ImageDir=/usr/share/plymouth/themes/dark-knight',
                           (stage/'dark-knight.plymouth').read_text())

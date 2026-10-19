@@ -14,14 +14,17 @@ script that checks contrast, so comments and dim text stay readable.
 | Gotham | ![Gotham wallpaper](backgrounds/1-gotham.png) | ![Gotham splash](preview-unlock.png) |
 | Cape | ![Cape wallpaper](backgrounds/2-cape.png) | ![Cape splash](preview-unlock-cape.png) |
 
-Gotham is a flat skyline with a Bat-Signal above it. Cape uses a large bat
-silhouette and broad angular planes. Both use solid blue-grey colours on
-Foot's `#0A1014` background, with no gradients, textures or 3D effects.
-Each has a matching splash. Gotham is the default.
+Gotham uses a layered Gothic and Art Deco skyline with a Bat-Signal and
+sparse window strips. Cape uses only the bat emblem centred on a plain dark
+background. Both use solid blue-grey vector shapes on `#0A1014`.
 
-Editable SVG exports are in [assets/artwork](assets/artwork/). Wallpapers are
-exported at 3840x2400; splash assets have transparent 1320x480 canvases.
-The compositions are defined in `src/artwork.py`; rerendering replaces the SVGs.
+The artwork is fully vector, with no embedded photographs, raster layers,
+gradients or textures. Editable SVGs are in [assets/artwork](assets/artwork/).
+Desktop PNGs are exported at 5120x3200; the SVGs scale to any resolution.
+Splash assets have transparent 1320x480 canvases. The compositions are defined
+in `src/artwork.py` and `src/scenes.py`; regeneration replaces the SVG exports.
+Boot uses a steel-blue bat emblem; login uses the subdued wallpaper emblem
+colour. Both centre password dots and hide the lock icon.
 
 The composition and production research is in
 [the wallpaper brief](docs/WALLPAPER-BRIEF.md).
@@ -31,7 +34,7 @@ The composition and production research is in
 Both designs are available for iPhone, Android and iPad, including portrait
 and landscape iPad layouts. The compositions leave room for the lock-screen
 clock. [Browse the downloads](wallpapers/README.md) or
-[download all eight PNGs](https://github.com/itsgg/omarchy-dark-knight-theme/releases/download/mobile-wallpapers-v1/dark-knight-mobile.zip).
+[download all eight PNGs](wallpapers/dark-knight-mobile.zip).
 
 ## Install
 
@@ -84,8 +87,9 @@ omarchy theme bg set ~/.local/state/omarchy/current/theme/backgrounds/2-cape.png
 Use `omarchy theme bg next` to cycle between them. Applying the current theme
 again can advance the wallpaper; `omarchy theme refresh` preserves your selection.
 
-The boot splash is selected separately. These commands show a password dialog
-and rebuild the initramfs. For the Gotham splash:
+The boot splash is selected separately. Both variations share the simple bat
+emblem. These commands show a password dialog and rebuild the initramfs.
+For the Gotham splash:
 
 ```sh
 bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh gotham
@@ -97,10 +101,24 @@ For the Cape splash:
 bash ~/.config/omarchy/themes/dark-knight/src/install-splash.sh cape
 ```
 
-The installer uses the theme's background and foreground colours and creates
-a separate Plymouth theme without the external lock icon. Changing the desktop
-wallpaper does not change the boot splash. These commands leave the desktop
-lock screen and SDDM login screen alone.
+The installer uses the theme's colours and creates a separate Plymouth theme
+with centred password dots and a hidden lock icon. Changing the desktop
+wallpaper does not change the boot splash.
+
+Install the matching SDDM login screen separately:
+
+```sh
+bash ~/.config/omarchy/themes/dark-knight/src/install-login.sh
+```
+
+This installs a dedicated theme under `/usr/local/share/sddm/themes` and a
+small SDDM theme override. It does not restart your session.
+Autologin may bypass the greeter; the installer leaves autologin unchanged.
+
+![SDDM login screen](preview-login.png)
+
+Desktop lock follows the current wallpaper and keeps Omarchy's authentication
+controls. [View Gotham](preview-lock-gotham.png) or [Cape](preview-lock-cape.png).
 
 ## Palette
 

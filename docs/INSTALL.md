@@ -158,3 +158,26 @@ omarchy theme refresh
 This writes `theme.css` into each vault's `.obsidian/themes/Omarchy/`
 directory so Obsidian picks up the theme without switching themes away and back.
 
+
+## Matching SDDM login, 2026-10-19
+
+Run the following to install the dedicated login theme:
+
+```sh
+bash ~/.config/omarchy/themes/dark-knight/src/install-login.sh
+```
+
+It
+uses the bat emblem in the subdued wallpaper colour, with a centred password
+placeholder and dots and no lock icon. The installer writes to
+`/usr/local/share/sddm/themes/dark-knight` and
+`/etc/sddm.conf.d/zz-dark-knight.conf`. It keeps backups in
+`/var/tmp/dark-knight-login.*` and does not restart SDDM or the current session.
+
+Run `python3 src/login.py <preview-directory>` and
+`sddm-greeter-qt6 --test-mode --theme <preview-directory>` for a preview.
+Autologin may bypass the greeter; this theme does not change autologin.
+
+Boot and disk unlock use `bash src/install-splash.sh gotham`. Both wallpaper
+variations now share the same simple splash. Masked dots stay centred while
+password length changes, and the lock icon remains hidden.
