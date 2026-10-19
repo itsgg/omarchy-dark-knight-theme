@@ -59,3 +59,4 @@ emit neovim.lua python3 neovim.py
 
 # Shared compositions for both wallpapers and matching Plymouth marks.
 python3 artwork.py
+python3 mobile.py

@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# Generated download bundle is attached to GitHub releases.
+/wallpapers/*.zip

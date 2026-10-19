@@ -26,6 +26,13 @@ The compositions are defined in `src/artwork.py`; rerendering replaces the SVGs.
 The composition and production research is in
 [the wallpaper brief](docs/WALLPAPER-BRIEF.md).
 
+## Phone and tablet wallpapers
+
+Both designs are available for iPhone, Android and iPad, including portrait
+and landscape iPad layouts. The compositions leave room for the lock-screen
+clock. [Browse the downloads](wallpapers/README.md) or
+[download all eight PNGs](https://github.com/itsgg/omarchy-dark-knight-theme/releases/download/mobile-wallpapers-v1/dark-knight-mobile.zip).
+
 ## Install
 
 ```sh
@@ -134,6 +141,7 @@ shell, Chromium, VS Code, Obsidian), plus:
 python3 src/palette.py > colors.toml   # fails if a contrast floor is missed
 src/render.sh                          # theme files, flat SVGs, PNGs and previews
 python3 src/artwork.py                 # rerender only the two artwork pairs
+python3 src/mobile.py                  # phone and tablet artwork, preview and ZIP
 src/preview.sh                         # retakes preview.png
 python3 -m unittest discover -s tests -v # installer checks; requires bubblewrap
 ```
