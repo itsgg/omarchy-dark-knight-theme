@@ -36,8 +36,9 @@ def build(destination, variation):
     logo = ROOT / ('unlock.png' if variation == 'gotham' else 'unlock-cape.png')
     shutil.copyfile(logo, destination / 'logo.png')
     for name in ('bullet.png', 'entry.png', 'progress_bar.png'):
+        colour = palette['line'] if name == 'entry.png' else palette['foreground']
         subprocess.run(['magick', str(destination/name), '-channel', 'RGB', '+level-colors',
-                        f'{palette["foreground"]},{palette["foreground"]}', str(destination/name)], check=True)
+                        f'{colour},{colour}', str(destination/name)], check=True)
     # Keep the vendor script's positioning and password callbacks intact.
     # A transparent lock has the original dimensions and contributes no pixels.
     subprocess.run(['magick', '-size', '84x96', 'xc:none', '-strip',

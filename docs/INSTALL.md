@@ -178,6 +178,7 @@ Run `python3 src/login.py <preview-directory>` and
 `sddm-greeter-qt6 --test-mode --theme <preview-directory>` for a preview.
 Autologin may bypass the greeter; this theme does not change autologin.
 
-Boot and disk unlock use `bash src/install-splash.sh gotham`. Both wallpaper
-variations now share the same simple splash. Masked dots stay centred while
+Boot and disk unlock use `bash src/install-splash.sh gotham` for the circular
+Bat-Signal emblem, or `bash src/install-splash.sh cape` for the standalone emblem.
+Both use dim artwork and a blue-grey password border. Masked dots stay centred while
 password length changes, and the lock icon remains hidden.

@@ -23,9 +23,9 @@ gradients or textures. Editable SVGs are in [assets/artwork](assets/artwork/).
 Desktop PNGs are exported at 5120x3200; the SVGs scale to any resolution.
 Splash assets have transparent 1320x480 canvases. The compositions are defined
 in `src/artwork.py` and `src/scenes.py`; regeneration replaces the SVG exports.
-Boot uses a steel-blue bat emblem; login uses the wallpaper emblem colour
-at 60% opacity and a blue-grey password border. Both centre password dots
-and hide the lock icon.
+Boot and disk unlock use a dim circular Bat-Signal emblem for Gotham, and a dim
+standalone emblem for Cape. Login uses the standalone emblem at 60% opacity.
+Both use a blue-grey password border, centre password dots and hide the lock icon.
 
 The composition and production research is in
 [the wallpaper brief](docs/WALLPAPER-BRIEF.md).
@@ -88,8 +88,8 @@ omarchy theme bg set ~/.local/state/omarchy/current/theme/backgrounds/2-cape.png
 Use `omarchy theme bg next` to cycle between them. Applying the current theme
 again can advance the wallpaper; `omarchy theme refresh` preserves your selection.
 
-The boot splash is selected separately. Both variations share the simple bat
-emblem. These commands show a password dialog and rebuild the initramfs.
+The boot splash is selected separately: Gotham uses the circular Bat-Signal emblem;
+Cape uses the standalone emblem. These commands show a password dialog and rebuild the initramfs.
 For the Gotham splash:
 
 ```sh

@@ -52,16 +52,20 @@ def vector_scene(style, width, height):
     return body
 
 
-def splash():
-    return svg(1320, 480, f'<path d="{path(.44, 660, 240)}" fill="{P["muted"]}"/>')
+def splash(style):
+    if style == 'gotham':
+        body = signal(660, 240, 150)
+    else:
+        body = f'<path d="{path(.44, 660, 240)}" fill="{P["line"]}"/>'
+    return svg(1320, 480, f'<g opacity="0.6">{body}</g>')
 
 
 def gotham(wallpaper):
-    return svg(5120, 3200, vector_scene('gotham', 1920, 1200), wallpaper=True) if wallpaper else splash()
+    return svg(5120, 3200, vector_scene('gotham', 1920, 1200), wallpaper=True) if wallpaper else splash('gotham')
 
 
 def cape(wallpaper):
-    return svg(5120, 3200, vector_scene('cape', 1920, 1200), wallpaper=True) if wallpaper else splash()
+    return svg(5120, 3200, vector_scene('cape', 1920, 1200), wallpaper=True) if wallpaper else splash('cape')
 
 
 def main():

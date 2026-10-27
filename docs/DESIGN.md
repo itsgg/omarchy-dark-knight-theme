@@ -212,7 +212,8 @@ Phone and tablet variants use the same vector scene functions. Their upper
 regions stay open for lock-screen clocks. The renderer regenerates all eight
 mobile exports, their contact sheet and the download ZIP.
 
-Both boot variations use one simple steel-blue bat emblem on #0A1014.
+Gotham boot uses a circular Bat-Signal emblem; Cape uses a standalone bat emblem.
+Both compositions use 60% opacity on #0A1014 and a `line` password border.
 The hidden lock icon keeps its original transparent canvas. Password dots
 are repositioned on every keystroke to stay centred as the password grows
 or shrinks. All other vendor dialogue and authentication callbacks remain
@@ -249,8 +250,8 @@ this repository, and the carousel compares like with like.
 
 ### Plymouth
 
-`unlock.png` is Gotham; `unlock-cape.png` is Cape. Both use the same simple
-steel-blue bat emblem on a transparent ground. Plymouth paints the palette
+`unlock.png` is Gotham's circular Bat-Signal emblem; `unlock-cape.png` is Cape's
+standalone bat emblem. Both use 60% opacity on a transparent ground. Plymouth paints the palette
 background behind them. The README documents each pair.
 
 `src/plymouth.py` builds a separate Plymouth theme from Omarchy's packaged

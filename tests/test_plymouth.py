@@ -17,6 +17,15 @@ from plymouth import build, preview, ORIGINAL_BULLET_LAYOUT, CENTERED_BULLET_LAY
 @unittest.skipUnless(shutil.which('magick') and Path('/usr/share/omarchy/default/plymouth').is_dir(),
                      'requires ImageMagick and installed Omarchy assets')
 class PlymouthTest(unittest.TestCase):
+    def test_variations_install_distinct_emblems(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            logos = []
+            for variation in ('gotham', 'cape'):
+                stage = Path(scratch)/variation
+                build(stage, variation)
+                logos.append((stage/'logo.png').read_bytes())
+            self.assertNotEqual(*logos)
+
     def test_failed_preview_render_preserves_previous_image(self):
         with tempfile.TemporaryDirectory() as scratch:
             target = Path(scratch)/'preview.png'
