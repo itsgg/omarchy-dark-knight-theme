@@ -23,8 +23,9 @@ gradients or textures. Editable SVGs are in [assets/artwork](assets/artwork/).
 Desktop PNGs are exported at 5120x3200; the SVGs scale to any resolution.
 Splash assets have transparent 1320x480 canvases. The compositions are defined
 in `src/artwork.py` and `src/scenes.py`; regeneration replaces the SVG exports.
-Boot uses a steel-blue bat emblem; login uses the subdued wallpaper emblem
-colour. Both centre password dots and hide the lock icon.
+Boot uses a steel-blue bat emblem; login uses the wallpaper emblem colour
+at 60% opacity and a blue-grey password border. Both centre password dots
+and hide the lock icon.
 
 The composition and production research is in
 [the wallpaper brief](docs/WALLPAPER-BRIEF.md).

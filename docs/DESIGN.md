@@ -218,8 +218,9 @@ are repositioned on every keystroke to stay centred as the password grows
 or shrinks. All other vendor dialogue and authentication callbacks remain
 in place. Boot previews use the same assets and dot geometry.
 
-The dedicated SDDM theme uses the wallpaper emblem colour (`line`) and centres
-its placeholder and masked dots. Its lock
+The dedicated SDDM theme uses the wallpaper emblem colour (`line`) at 60%
+opacity, with a `line` password border, and centres its placeholder and masked
+dots. Failed login retains the red border. Its lock
 icon is hidden, and its compact emblem canvas avoids excess transparent
 spacing. `src/login.py` builds the theme and `src/install-login.sh` installs
 it under /usr/local/share/sddm/themes with a theme-only override. Autologin

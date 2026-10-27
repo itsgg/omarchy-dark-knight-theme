@@ -168,8 +168,8 @@ bash ~/.config/omarchy/themes/dark-knight/src/install-login.sh
 ```
 
 It
-uses the bat emblem in the subdued wallpaper colour, with a centred password
-placeholder and dots and no lock icon. The installer writes to
+uses the bat emblem in the wallpaper colour at 60% opacity, with a blue-grey
+password border, centred placeholder and dots, and no lock icon. The installer writes to
 `/usr/local/share/sddm/themes/dark-knight` and
 `/etc/sddm.conf.d/zz-dark-knight.conf`. It keeps backups in
 `/var/tmp/dark-knight-login.*` and does not restart SDDM or the current session.

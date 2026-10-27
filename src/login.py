@@ -19,11 +19,13 @@ def build(destination):
     for name in ('entry.png', 'entry-failed.png', 'bullet.png', 'lock.png', 'lock-failed.png'):
         shutil.copy2(source/name, destination/name)
         colour = palette['red'] if 'failed' in name else palette['foreground']
+        if name == 'entry.png':
+            colour = palette['line']
         subprocess.run(['magick', str(destination/name), '-channel', 'RGB',
                         '+level-colors', f'{colour},{colour}', str(destination/name)], check=True)
     logo = (f'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="220" '
             f'viewBox="0 0 600 220"><path d="{path(.44, 300, 110)}" '
-            f'fill="{palette["line"]}"/></svg>')
+            f'fill="{palette["line"]}" fill-opacity="0.6"/></svg>')
     (destination/'logo.svg').write_text(logo)
     subprocess.run(['rsvg-convert', str(destination/'logo.svg'), '-o', str(destination/'logo.png')], check=True)
     (destination/'theme.conf').write_text('[General]\n')
